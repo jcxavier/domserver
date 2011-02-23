@@ -1,0 +1,179 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<LINK REL="stylesheet" HREF="../../../style.css">
+ <META NAME="GENERATOR" CONTENT="LinuxDoc-Tools 0.9.50">
+ <TITLE>DOMjudge Administrator's Manual: Web interface</TITLE>
+ <LINK HREF="admin-manual-6.html" REL=next>
+ <LINK HREF="admin-manual-4.html" REL=previous>
+ <LINK HREF="admin-manual.html#toc5" REL=contents>
+</HEAD>
+<BODY>
+<A HREF="admin-manual-6.html">Next</A>
+<A HREF="admin-manual-4.html">Previous</A>
+<A HREF="admin-manual.html#toc5">Contents</A>
+<HR>
+<H2><A NAME="webinterface"></A> <A NAME="s5">5.</A> <A HREF="admin-manual.html#toc5">Web interface</A></H2>
+
+
+<P>The web interface is the main point of interaction with the system.
+Here you can view submissions coming in, control judging,
+view the standings and edit data.</P>
+
+<H2><A NAME="ss5.1">5.1</A> <A HREF="admin-manual.html#toc5.1">Jury and Administrator view</A>
+</H2>
+
+
+<P>The jury interface has two possible views: one for jury members,
+and one for DOMjudge administrators. The second view is the same as
+the jury view, but with more features added. Which to show is decided
+by using the HTTP authentication login used to access the web interface;
+you can list which HTTP users are admin with the variable
+<CODE>DOMJUDGE_ADMINS</CODE> in <CODE>etc/domserver-config.php</CODE>.</P>
+<P>This separation is handy as a matter of security (jury members cannot
+(accidentally) modify things that shouldn't be) and clarity (jury members
+are not confused / distracted by options they don't need).</P>
+<P>Options offered to administrators only:
+<UL>
+<LI>Adding and editing any contest data</LI>
+<LI>Managing team passwords</LI>
+<LI>The config checker</LI>
+<LI>Refreshing the scoreboard &amp; hostname caches</LI>
+<LI>Rejudge 'correct' submissions</LI>
+<LI>Restart 'pending' judgings</LI>
+</UL>
+
+Furthermore, some quick link menu items might differ according to
+usefulness for jury or admins.</P>
+<P><EM>A note on rejudging:</EM> it is policy within the DOMjudge system
+that a correct solution cannot be reverted to incorrect. Therefore,
+administrator rights are required to rejudge correct or pending
+(hence, possibly correct) submissions. For some more details on
+rejudging, see the jury manual.</P>
+
+
+<H2><A NAME="scoreboard"></A> <A NAME="ss5.2">5.2</A> <A HREF="admin-manual.html#toc5.2">The scoreboard </A>
+</H2>
+
+
+<P>The scoreboard is the canonical overview for anyone interested in the
+contest, be it jury, teams or the general public. It deserves to get a
+section of its own.</P>
+
+<H3><A NAME="scoreboard:colours"></A> Colours and sorting </H3>
+
+
+<P>Each problem can be associated with a specific colour, e.g. the colour
+of the corresponding balloon that is handed out. DOMjudge can display
+this colour on the scoreboard, if you fill in the `color' attribute in
+the `problem' table; set it to a 
+<A HREF="http://www.w3.org/TR/REC-CSS1#color-units">valid CSS colour value</A> (e.g. `green'
+or `#ff0000', although a name is preferred for displaying colour
+names).</P>
+<P>It's possible to have different categories of teams participating,
+this is controlled through the `team_category' table. Each category
+has its own background colour in the scoreboard. This colour can be
+set with the `color' attribute to a valid CSS colour value.</P>
+<P>If you wish, you can also define a sortorder in the category table.
+This is the first field that the scoreboard is sorted on. If you want
+regular teams to be sorted first, but after them you want to sort both
+spectator- and business teams equally, you define `0' for the regular
+category and `1' for the other categories. To completely remove a
+category from the public (but not the jury) scoreboard, the category
+visible flag can be set to `0'.</P>
+
+
+<H3>Starting and ending</H3>
+
+
+<P>The displayed scoreboard will always be that of the most recently
+started contest. The scoreboard is never displayed for a contest that
+still has to start. In other words, the scores will become visible on
+the first second of a contest start time.</P>
+<P>When the contest ends, the scores will remain to be displayed, until a
+next contest starts.</P>
+
+<H3><A NAME="scoreboard:freeze"></A> Freezing and defrosting </H3>
+
+
+<P>DOMjudge has the option to `freeze' the public- and team scoreboards
+at some point during the contest. This means that scores are no longer
+updated and remain to be displayed as they were at the time of the
+freeze. This is often done to keep the last hour interesting for all.
+The scoreboard freeze time can be set with the `freezetime'
+attribute in the contest table.</P>
+<P>The scoreboard freezing works by looking at the time a submission is
+made. Therefore it's possible that submissions from (just) before the
+freezetime but judged after it can still cause updates to the public
+scoreboard. A rejudging during the freeze may also cause such updates.</P>
+<P>If you do not set any freeze time, this option does nothing. If you
+set it, the public- and team scoreboards will not be updated anymore
+once this time has arrived. The jury will however still see the actual
+scoreboard.</P>
+<P>Once the contest is over, the scores are not automatically `unfrozen'.
+This is done to keep them secret until e.g. the prize ceremony. You
+can release the final scores to team- and public interfaces when the
+time is right. You can do this either by setting a predefined
+`unfreezetime' in the contest table, or you push the `unfreeze scores
+now' button in the jury web interface, under contests.</P>
+
+<H3>Clickability</H3>
+
+
+<P>Almost every cell is clickable in the jury interface and gives
+detailed information relevant to that cell. This is (of course) not
+available in the team and public scoreboards, except that in the team
+and public interface the team name cell links to a page with some more
+information and optionally a team picture.</P>
+
+<H3>Caching</H3>
+
+
+<P>The scoreboard is not recalculated on every page load, but rather
+cached in the database. It should be safe for repeated reloads from
+many clients. In exceptional situations (should never occur in normal
+operation, e.g. a bug in DOMjudge), the cache may become inaccurate.
+The jury administrator interface contains an option to recalculate a
+fresh version of the entire scoreboard. You should use this option
+only when actually necessary, since it puts quite a load on the
+database.</P>
+
+<H3>Exporting to an external website</H3>
+
+
+<P>In many cases you might want to create a copy of the scoreboard for
+external viewing from the internet. The command
+<CODE>bin/static_scoreboard</CODE> is provided just for that. It writes to
+stdout a version of the scoreboard with refresh meta-tags and links to
+team pages removed. This command can for example be run every minute
+and the output be placed as static content on a publicly reachable
+webserver.</P>
+
+<H2><A NAME="ss5.3">5.3</A> <A HREF="admin-manual.html#toc5.3">Balloons</A>
+</H2>
+
+
+<P>In many contests balloons are handed out to teams that solve a
+particular problem. DOMjudge can help in this process: both a web
+interface and a notification daemon are available to notify that a new
+balloon needs to be handed out. Note that only one should be used at a
+time.</P>
+<P>The web based tool is reachable from the main page in the jury
+interface, where each balloon has to be checked off by the person
+handing it out.</P>
+<P>For the daemon, set the BALLOON_CMD in <CODE>bin/balloons</CODE> to define
+how notifications
+are sent. Examples are to mail to a specific mailbox or to send
+prints to a printer. When configured, start <CODE>bin/balloons</CODE>
+and notification will start.</P>
+<P>Notifications will continue even after the scoreboard is frozen,
+although a warning is printed on the notification. Stop the balloons
+daemon when you don't want balloons to be handed out anymore.</P>
+
+
+<HR>
+<A HREF="admin-manual-6.html">Next</A>
+<A HREF="admin-manual-4.html">Previous</A>
+<A HREF="admin-manual.html#toc5">Contents</A>
+</BODY>
+</HTML>

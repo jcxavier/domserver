@@ -1,0 +1,514 @@
+DOMjudge Programming Contest Judging System
+
+Version 3.1.3 - 21 December 2010
+--------------------------------
+ - In JS problem name detection, probid needs to be casenormalised too.
+ - Fix websubmit when using numeric problem ID's, thanks Vladimir Vassiliev.
+ - Improve documentation on JVM memory problems.
+ - Set MySQL connection encoding explicitly. Introduces a new option:
+   DJ_CHARACTER_SET_MYSQL.
+
+Version 3.1.2 - 27 October 2010
+-------------------------------
+ - Fix missing permissions for plugin interface SQL user.
+ - Fix information leak in clarification problems list. (Closes: #3096018)
+ - Small documentation improvements.
+ - Do not check scoreboard cache for key integrity; this
+   prevents deletion of teams while adding no real value.
+
+Version 3.1.1 - 22 August 2010
+------------------------------
+ - Update upstream autoconf macro's fixing multiple small bugs.
+ - Fix autoconf checks for libcURL and static linking.
+ - Fix Makefile rules for building library objects and for
+   (re)generating configure script.
+ - Workaround sorttable colspan bug and use stable sorting.
+ - Small documentation fixes.
+ - Fix expected output for reboot test-source.
+ - Don't shorten a team's hostname if it is an IP address.
+ - Add unique index on language extension, required for compile scripts.
+ - Remove literate Haskell test-source: doesn't compile without extension.
+
+Version 3.1.0 - 14 July 2010
+----------------------------
+ - Add multiple testcases support.
+ - Add PHP session support as alternative to IP address authentication.
+   Based on patches by Tobias Werth.
+ - Bugfixes and improvements to checktestdata program.
+ - Fix error trapping in subshells, thanks Jan Jergus. (Closes: #2866430)
+ - Fix bug in lib.database.php with array_map "class::method" notation.
+ - Add 'enabled' field to contest to allow for easier editing.
+ - Only show the configured submission methods in the team manual.
+ - Fix install of gendbpasswords and use /dev/urandom.
+ - Add documentation on static_scoreboard.
+ - Add problem subject to clarifications, idea from DomJudge@FAU.
+ - Add WHILE command and tests to checktestdata syntax.
+ - Move PENALTY_TIME variable out of common-config into domserver-config.
+ - Add combined_scoreboard script to view scoreboard of multiple sites.
+ - The judgedaemon now tries to restore a lost db connection (Closes: #2897130)
+ - Fix: check for both htpasswd{,2} binaries in configure.
+ - Fix white problem colour by adding a circle image with black border.
+ - Ports from ETH tree: use pipes with wc and gcc.
+ - Fix bug: typo in presentation-error exitcode, and add safeguard.
+ - Add security: check for stale judging directories (port from ETH tree).
+ - Bugfix: allow zero size testcases (port from ETH tree).
+ - Show config checker runtime (port from ETH tree).
+ - Make syntax highlighting more modular, and add support for the
+   GeSHi syntax highlighter.
+ - Add sample PDF problem texts for inclusion in the database.
+ - Fix bug in handling of libmagic cookie.
+ - Refactor team authentication code to allow for other methods.
+ - Eliminate WEBBASEURI setting.
+ - Add JavaScript colour picker to balloon colour edit box, using
+   jscolor 1.3.1 by Jan Odvárko.
+ - Improve layout and usability of displayed tables.
+ - Add "viewing" to verification status in jury submission list, idea
+   from DomJudge@FAU.
+ - Added AWK, C# and Python language support.
+ - Added upgrade support for the SQL database.
+ - Fix some HTML escaping issues found with skipfish.
+ - In chroot-startstop, cope properly with /lib64 being a symlink to
+   /lib. Thanks Christoph Dittmann.
+ - Enforce the previously implicit notion that probid may only consist
+   of characters in "a-zA-Z0-9_".
+ - Fix SQL syntax error in restore_sources2db script.
+ - Upgrade included dash shell to version 0.5.5.1-6.
+ - Fix swapped error messages in submit client.
+ - Correctly handle empty optional diff file argument.
+ - Include standard C headers in misc/scanner.h.
+
+Version 3.0.0 Release Candidate 2 - 3 September 2009
+----------------------------------------------------
+ - Fix directory install permissions.
+ - Only show languages that are not submitable as 'disabled'
+   and show a separator between contests on the problems page.
+ - Minor updates to team manual.
+
+Version 3.0.0 Release Candidate 1 - 16 June 2009
+------------------------------------------------
+ - Raise required PHP version to 5.
+ - Replace included static bash by dash shell.
+ - Revise team manual.
+ - Add missing link to add testcases to a new problem.
+ - Fix bug causing segfaults of submitdaemon. (Closes: #2046031)
+ - Added script to check results of submitted test-sources.
+ - Added 'checktestdata' script for checking testdata via grammar specification.
+ - Add support for FHS directory structure installation.
+ - Move all configure paths to globally included paths.mk file.
+ - Repair broken documentation build/install system.
+ - MySQL table types are now InnoDB. Define foreign key relations
+   between tables (Closes: #2144325).
+ - Use db values instead of the userinput. (Closes #2144718)
+ - Add a FLUSH PRIVILEGES statement after user grants during
+   installation, as this may be necessary to have MySQL pick up
+   all changes correctly.
+ - Don't use -fstack-protector under Cygwin. (Closes: #2144713)
+ - Distribute prebuilt versions of the admin and judge manuals and
+   remove svn,expdlist downloads for the team manual.
+ - New compactified layout of team manual.
+ - Add note about Java class naming in team manual. (Closes: #2153189)
+ - Add Java compile script that autodetects class name. (Closes: #1964765)
+ - Add binary file check in commandline submit. (Closes: #2046017)
+ - Make HTML tables sortable in the jury view.
+ - Removed "feature" of only allowing alnum chars in filename base
+   for submit client problem parsing.
+ - Show truncated team names instead of logins in submissions overview.
+ - Fix bug of submittime==endtime not showing as too-late, thanks Tobias Werth.
+ - Replace 'hostname --short' option, fixing inconsistent results.
+ - Merge changes in ipv6 branch to trunk, IPv6 comparison not yet functional.
+ - Show unread clafications in the title of the team clarifications page.
+   (Closes: #2148054)
+ - Added test sources for java class name, network and root user.
+ - Only wrap unquoted lines in clarification texts. (Closes: #2244652)
+ - Only build submit client/daemon on request via configure. (Closes: #2046029)
+ - Flush results in config checker for better feedback.
+ - Fixed DB installation support with script 'dj-setup-database'.
+ - Update included dash shell to version 0.5.5.1-2 (Debian upstream).
+ - Replace beep by alert plugin program. (Closes: #1878083)
+ - Add functionality and fix security issue in runguard, thanks Thomas Rast.
+ - Check for safe_mode before diff-ing tempfiles. (Closes: #1808354)
+ - Proper error message when entering a team ip that's already in use.
+ - Remove javascript sorting from table columns where it doesn't make sense.
+ - Commandline submitclient supports only http by default now.
+ - Remove redundant copies of testdata by symlinks. (Closes #2805385)
+ - Java chroot script now uses Sun's OpenJDK-headless, allowing for a leaner
+   chroot and more supported architectures.
+ - Reorder source tree: removed bin dir, move test-sources to tests, cleanup.
+ - Fix DEBUG_JUDGE option for debugging judging backend.
+ - FreeBSD porting fixes, making DOMjudge more POSIX compliant.
+ - Make DOMjudge work when PHP's short_open_tag = Off.
+ - Add support for staged installs (DESTDIR).
+
+Version 2.2.0 - 11 August 2008
+------------------------------
+ - Do not install domjudge straight in $HOME by default.
+ - [security] Add sanity check in jury interface whether basic authentication
+   is enabled, and lock down jury inferface also for non-GET/POST requests
+ - Fix race condition in team password check.
+ - Improved MySQL query performance.
+ - Move .htaccess config to apache config.
+ - Fix 'NONINTERACTIVE' undefined (Closes: #1814594, thanks Maks Verver)
+ - Moved beep system call to separate function in lib.misc.{c,php}.
+ - Switch to UTF-8 for output. (Closes: #1742460)
+ - Represent balloon colours with a symbol rather than filling the background,
+   making the scoreboard less cacophonic. (Closes: #1808561)
+ - Add a web based tool for tracking balloon handouts.
+ - Fix C compiler warnings by using 'const char *'.
+ - Fix noninteractive/logging code in websubmit to restore submitclient
+   error parsing (Closes: #1829621).
+ - Fix variable name in judge/compare_program.sh.
+ - Added make dist target and removed generated figures.
+ - Added cookie for last verifier in jury webinterface (Closes: #1742044).
+ - Added option to only show unverified submissions in jury interface.
+ - Fix bug that jury was not allowed to set clarifications (un)answered.
+ - Fix problem that runguard ignored SIGALRM on some distributions (thanks
+   Tobias Werth).
+ - New required activatetime field for a contest: defines the moment the
+   team/public displays start to display this contest, but no submissions
+   accepted yet. Solves the problem of testsession data still displayed upto
+   the second before a contest starts (Closes: #1825555).
+ - Rename contest.lastscoreupdate to freezetime to be more clear
+   and in line with other table attributes.
+ - Add salt to passwords' md5 hashes.
+ - Move setting resource limit from run script to runguard.
+ - Added signal detection to daemons for graceful shutdown (Closes: #1808478).
+ - Fixed bug in test-stacksize.c due to compiler optimization
+   (Closes: #1788820).
+ - Add some rudimentary tests.
+ - Remove websubmitdaemon, submit directly to database (Closes: #1737229).
+ - Add script to restore submission table from SUBMITDIR files.
+ - Complete implementation of syslog logging (now also for C/C++).
+ - Send jury user back to referrer page after edits (Closes: #1821543).
+ - Remove .php extensions from commandline scripts.
+ - Higher displayed precision in float compare.
+ - Fix submit_copy to use bash.
+ - Make it easier to return custom result codes for a judging.
+ - Added support for "presentation error" results.
+ - Enable GCC security features for compiling DOMjudge helper programs.
+ - Automatically generate apache.conf from global.conf (Closes: #1778059).
+ - Added work-in-progress code for eventdaemon (Working on: #1682761).
+ - Added printer friendly version of jury scoreboard.
+ - Restyle configchecker and also check MySQL version and max_connections.
+ - Explicitly use DBSERVER host with mysql install (Closes: #1955439).
+ - Display time left to end of contest on every page (Closes: #1960940).
+ - Move php files that shouldn't be served to lib/www (Closes: #1957891).
+ - The admin can exclude submissions from a team's score (Closes: #1742043).
+ - Added choice of view types to submissions page, default to 50 most recent
+   submissions (Closes: #1964747). Choice is remembered in a cookie.
+ - More flexible debugging settings with a bitmask (Closes: #1759103).
+ - Store testdata in database and add interface to view/update it.
+ - Add an anchor to the first changed line in the diff (Closes: #1818874).
+ - Added 'domjudge_plugin' mysql user for the plugin webinterface.
+ - Cache hostname in team table to prevent slowdown on hosts without
+   working reverse.
+ - Removed LGPL licence by relicencing 2 files to GPL.
+ - Added ability to download source code for jury.
+ - Allow bash-static to be replaced by any static POSIX shell.
+ - In MySQL privileges table, add 'localhost' entries next to '%' entries
+   to prevent Access Denied when DB is on localhost.
+
+Version 2.1.1 - SVN
+-------------------
+ - Implement syslog logging (for PHP and shell scripts).
+ - Fix typo in jury/submission.php causing a parse error when using
+   PHP4 (Closes: #1808259, thanks mhil@fmf.nl).
+ - Fix team unread clarification count to work cross-contest.
+ - Update not the public, but the jury scoreboard after freeze.
+ - Fix poblem colour input field to match its size in the database.
+ - The colors of the problems are now shown in the jury problems overview
+   (Closes: #1808308).
+ - Improve contrast of default team category colours.
+ - Some improvements to admin manual including submission diagram.
+
+Version 2.1.0 - 5 September 2007
+--------------------------------
+ - Drop tempfile and mkstemps binaries, they are not necessary.
+ - Change runguard license to GPL 2 or higher. The current code
+   is a different implementation of the original idea from timeout.
+ - Make shell scripts /bin/sh where possible, set them to bash
+   where we rely on bash-specific features.
+ - Fixes to judge/compare.c for better handling of strange newlines and
+   printing first difference summary as first line.
+ - Allow admins to rejudge PENDING/CORRECT submissions (Closes: #1766222).
+ - Fix include test for Text_Highlighter to cope with missing PEAR.php.
+ - Fix password generation for more than one team.
+ - Fix test-logic bug in judge/check_program.sh: reversing judging outcomes.
+ - Make warning and error beeps default to something more noticeable.
+ - Let show_source cope with empty file submissions gracefully.
+ - Abort startup of judgedaemon if processes of RUNUSER still found running.
+ - Added extra default problem 'fltcmp' for testing check_float and special
+   run script code.
+ - Fix make_passwords.sh to cope with htpasswd2 instead of htpasswd. Thanks
+   Tobias Werth for the patch.
+ - Fix 2 generate_config.sh bugs: quoting error and tempfile cleanup.
+ - Print float abs/rel diffs in check_float (Closes: #1777195).
+ - Allow teams to respond to received clarifications (Closes: #1777179).
+ - Check LANG_EXTS array for consistency with languages table in configtest
+   (Closes: #1777182).
+
+Version 2.0.0 - SVN
+-------------------
+ - Use correct last modified date of team manual (Closes: #1744121).
+ - Allow to set a specific new password for a team (Closes: #1737142).
+ - Split general functions from submitcommon.cc to lib.misc.c and
+   improved makefile structure and build process under Cygwin.
+ - Replaced compare script by C program with better diff display.
+ - Use AJAX instead of iframe to notify team/jury of new clarifications.
+ - Added some security improvements to runguard.
+ - Drop dependency on tempfile during distclean.
+ - Fix compile errors/warnings in beep.c and compare.c (Closes: #1754218).
+
+Version 2.0.0 Release Candidate 2 - 25 June 2007
+------------------------------------------------
+ - A shared file system between judgehosts and jury system is no
+   longer required. The source is now communicated via the database.
+ - Merge judging information into submission page (Closes: #1741620).
+ - Improved portability to non-Linux systems (Closes: #1734046).
+ - Use syntax highlighting in source code viewer when PEAR
+   Text_Highlighter class is available.
+ - Generated passwords only lowercase and length 6 (Closes: #1737142).
+ - Split test-sources in normal and stress tests (Closes: #1737421).
+ - Remove 'NOW()' from SQL update/insert queries to make replication
+   time-independent.
+ - Fixed bug in submit_db: report errors before too-late submission.
+ - Fix bug in diff display when no newline present (Closes: #1741625).
+ - Select recipient explicitly on clarification send (Closes: #1741622).
+ - Use either wget or curl for downloading LaTeX packages.
+ - Add more checking and verification to database input.
+ - Upgrade bash to upstream Debian version 3.1dfsg and removed sources
+   from package to website to reduce package size.
+ - Bring lib.database.php up to date with latest upstream version.
+ - Improved error handling in team file uploads.
+ - Small-time cleanups.
+
+Version 2.0.0 Release Candidate 1 - 28 May 2007
+-----------------------------------------------
+ - Minimum MySQL version required is now 4.1: simplify SQL privilege
+   removal.
+ - [INCOMPATIBLE CHANGE] Renamed judger to judgehost everywhere to
+   remove ambiguity between human judges and judge computers.
+ - [INCOMPATIBLE CHANGE] Renamed team to teamid in database tables
+   refencing the 'team' table index 'login'.
+ - Add numbering to scoreboard.
+ - Make all cells in jury scoreboard links that refer to relevant
+   data for that cell (Closes: #1582358).
+ - Add affiliation icons to scoreboard (configurable). (Closes: #1355814).
+ - Adapt and split sql script files to allow for easier upgrading and
+   changing database name.
+ - Fix possible buffer overflow in submitcommon.cc; thanks to
+   Lennert Buytenhek for pointing out [CVE-2007-2977].
+ - Add option to commandline submit to use websubmit (Closes: #1582376)
+   and use libcurl for that (Closes: #1626222).
+ - Add unfreezetime field to contests which allows to display the final
+   standings to teams and public, and a button to unfreeze right away
+   (Closes: #1582370).
+ - Add problem and team category colours to MySQL DB.
+ - Add team summary to all main team pages.
+ - Add check_float program to compare floating point output.
+ - Parse validator XML output if xsltproc is available (Closes: #1238454).
+ - Add more summary data to tables.
+ - Fix clarification wrapping.
+ - Fix some language typos.
+ - Improve webinterface layout.
+ - Add MySQL transactions; will provide extra safety when the table type
+   supports it (otherwise does nothing).
+ - Rewrote submit daemon/client to use new networking code, which makes
+   transition to IPv6 compatibility easy. (Closes: #1576565).
+ - Change scoreboard sorting to use ACM ICPC (tie-breaker) rules.
+ - Added team information pages for teams and public and included team
+   members field in the SQL 'team' table.
+ - Unify documentation into an administrator's manual, a judgers manual
+   and a team manual.
+ - Balloon notifications can continue after scoreboard freeze, and will
+   list all balloons a team is supposed to have.
+ - Add event table to DB to store major events of the contest
+   (Working on: #1682761).
+ - Only judge submissions that are submitted strictly before the contest
+   end time.
+ - Fix check_float testing for NaN and INF (thanks to Maks Verver).
+ - Fix variable type to work on 64 bit systems in submit.cc (thanks to
+   Maks Verver).
+ - New script: static_scoreboard.php. Outputs a scoreboard suitable
+   as a static HTML page.
+ - Add DOMJUDGE_ADMINS variable in etc/passwords.php. This can be used
+   to differentiate between judges and admins for the web interface:
+   admins will be allowed to change more of the core data.
+ - Bring lib.database.php up to date with latest upstream version.
+ - Add Referential Integrity and HTTP Authentication check to configchecker.
+ - Add option to admin interface to edit and delete most data types.
+ - Improved build process of submit client under Windows/Cygwin.
+
+Version 1.3.0 - 6 October 2006
+------------------------------
+ - Fix balloons notification for new database layout introduced
+   in 1.1.0; thanks Lennert Buytenhek for the patch.
+ - Handle unwritable logfiles more gracefully.
+ - When scoreboard frozen, display since when.
+ - Some very minor tweaks to code and documentation.
+
+Version 1.3.0 Release Candidate 2 - 18 September 2006
+-----------------------------------------------------
+ - Large update and improvement of the documentation: more
+   installation information, a quick-install checklist, FAQ
+   is improved, example Apache configuration shipped and bugs
+   fixed (Closes: #1560107).
+ - Default hostname in MySQL privileges to '%' (all hosts), making
+   sure that webinterface, command line and remote judgers can all
+   connect (Closes: #1560108).
+ - Change default memory limit in global.cfg to 512MB, since the Sun
+   JVM consumes 200 MB by itself.
+ - chmod uploaded files so the websubmitdaemon can handle them
+   even if the webserver has a restrictive umask.
+ - Auto-focus the clarification textarea.
+ - Bring lib.database.php up to date with latest upstream version.
+ - Some miscellaneous minor tweaks.
+
+Version 1.3.0 Release Candidate 1 - 15 September 2006
+-----------------------------------------------------
+ - Added a separate script for extra setup of the chroot environment
+   and pass memory limit to Sun Java run script for better javac/java
+   support (Closes: #1508663).
+ - Added script to generate Java chroot environment from Debian sources.
+ - Added toggle buttons in jury interface for allowing submission
+   and judging per problem and language.
+ - Added option to enter verifier's name in jury interface.
+ - Changed config option SUBM_VERIFY to VERIFICATION_REQUIRED and
+   disabled "off" choice.
+ - Fixed some more HTML to be fully XHTML 1.0 Strict compliant.
+ - Included sources to comply with licences of included programs.
+ - Multiple other small fixes and enhancements.
+
+Version 1.2.0 - 26 June 2006
+----------------------------
+ - Added websubmit (Closes: #1103084).
+ - Added support for team passwords (generating and validating).
+ - Added team status light to jury teams overview (Closes: #1441783).
+ - Added confirm dialog when sending a clarification (reply).
+ - Added examples and documentation for how to use interpreted languages.
+ - Added support for specialised run and compare scripts.
+ - Timeout submitclient connection to server (Closes: #1477739).
+ - Minimum required PHP version now 4.3.2.
+ - Allow for IPv6 IP-addresses to be used.
+ - Correct parameters to `diff`, since '-2' is obsoleted.
+ - Checked all BASH scripts for 'set -e' (Closes: #1508492).
+ - Tweak HTML to be fully XHTML 1.0 Strict compliant.
+
+Version 1.1.0 - 22 December 2005
+--------------------------------
+ - Added 'make check' target which submits test-sources.
+ - Fixed that no compiler output gives compilation error.
+ - When solutions timeout, first try to kill graciously (Closes: #1312848).
+ - Removed LaTeX packages from the sources to remove GPL/LPPL conflicts.
+ - Changed runguard license to IBM Public License.
+ - Added diff to previous submission in source display (Closes: #1310244).
+ - Extra check on submission filenames to prevent theoretical exploits
+   (Closes: #1355816).
+ - Added summary of solved problems to team submissions page
+   (Closes: #1312241).
+ - Automatically quote clarification request when replying
+   (Closes: #1347688).
+ - [INCOMPATIBLE CHANGE] Renamed table category to team_category,
+   team_category.catid to categoryid and team.catid to categoryid,
+   scoreboard_{jury,public}.problem to probid.
+ - Added team_affiliation table which allows for storing the university,
+   institution or company teams belong to.
+ - Added room and comments fields to team table.
+ - Display sort-order in category overview.
+ - A lot of small webinterface enhancements.
+
+Version 1.0.0 - 4 October 2005
+------------------------------
+ - Updates to team manual and other documentation (Closes: #1306335).
+ - Fix case-bug in sql/mysql_privileges.sql example.
+ - Drop checking for existence of testdata in www/jury/checkconfig.php,
+   since the webserver doesn't need to be able to read that data.
+ - Minor enhancements to the jury webinterface display.
+ - Added config option to disable chroot environment for judging.
+ - Improved sample data.
+ - Add sort-order field to category table to enable some categories
+   to be sorted at the bottom automatically (Closes: #1311885).
+ - Some other small bugfixes.
+
+Version 1.0.0 Release Candidate 1 - 21 September 2005
+-----------------------------------------------------
+ - Added config option to autoconfigure team IP addresses.
+ - Added config option to (not) show compiler output to teams.
+ - Moved C-code from headers to separate files.
+ - Fixed bugs where submitdaemon couldn't handle spaces in language ext.
+ - Added balloons notification script (Closes: #1238416).
+ - Added feature: jury can do optional or required auditing of judgings
+   (Closes: #1070240).
+ - Accept late submissions, but do not judge them (Closes: #1238421).
+ - Improve efficiency of requesting contest data.
+ - Support the ICPC Validator Interface standard, concerning the
+   parameters of the compare script. The result.xml file is generated
+   but is not yet considered by test_solution (See: #1238454).
+ - Small improvements in Makefile's and install scripts.
+ - Some other small bugfixes.
+
+Version 0.3.1 - 16 July 2005
+----------------------------
+ - Added documentation on MySQL DB layout to INSTALL.
+ - Improved SQL installation/cleaning scripts.
+ - Added make target to automatically generate passwords.
+ - Fixed bug where teams received popups for their own clarifications.
+   (Closes: #1233038)
+ - Fixed missing privilege definition in MySQL table.
+ - Miscellaneous other small fixes.
+
+Version 0.3.0 - 5 July 2005
+---------------------------
+ - Added mass rejudging support per team,language,problem,judger.
+   (Closes: #1070241)
+ - Added FAQ in docs/FAQ.
+ - Fix missing column_priv (domjudge_user,problem,cid).
+ - Fix sorting for equal scores to be alphabetical on team name.
+ - Miscellaneous documentation improvements.
+ - Fix some problems with file permissions by setting those explicitly.
+ - Config checker now checks for existence of testdata.{in,out}.
+   (Closes: #1221427)
+ - Web interface copes better with empty database tables.
+ - Fixed that time_factor was inadvertently cast to int for output.
+ - Add tooltips explaining the scoreboard summary row.
+ - Made some enhancements to the Makefiles.
+ - Support MySQL 3/4 privilege tables and sql files installation.
+
+Version 0.2.0 - 23 February 2005
+--------------------------------
+ - Fixed faulty EPS-logo, finally.
+ - Add database privileges and move sql-files to own directory.
+   (Closes #1070236)
+ - Improve config.tex dependency.
+ - Make the base URI of the web interface configurable and fix redirects
+   to be compatible with the HTTP-specification.
+ - Fix bug in getSubmissions() that caused a syntax error on the
+   team-overview in the jury interface.
+ - Added some notes on security to the INSTALL docs.
+ - Symbolic links now included (subversion >= 1.1).
+ - Fixed buffer size bug in log/error C-code.
+ - Fix bug in submit_db where the problem name got case-normalised.
+ - Feature: Add caching to the Scoreboard. This vastly improves the
+   responsiveness and scalability of DOMjudge; outputting the scoreboard
+   is now an O(1) operation in queries. (Closes: #1070079)
+ - Some fixes to XHTML1.0 compliance.
+ - In tables, the time is now printed as hh:mm (without seconds).
+ - Complete rewrite of the clarification interface of both teams and jury.
+   Functional changes: added possibility to (un)set a request as "answered".
+ - Remove Dutch text from lib.database.php. (Closes: #1103043)
+ - Add functions for debugging and profiling (timing) the web interface.
+ - Include placeholder config files which output an error when the
+   system is unconfigured.
+ - Fix layout error of differences output.
+ - Only define STDERR when not already defined (differs per PHP version).
+
+Version 0.1.1 - 24 November 2004
+--------------------------------
+ - Improve documentation layout.
+ - Improve Makefiles and add global targets.
+ - Move passwords to separate passwords.php file.
+ - Redirect in webroot changed from permanent to temporary.
+ - Recreated EPS logo, now 75% smaller filesize.
+
+Version 0.1.0 - 18 November 2004
+--------------------------------
+ - First public release.

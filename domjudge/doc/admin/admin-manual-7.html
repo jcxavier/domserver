@@ -1,0 +1,213 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<LINK REL="stylesheet" HREF="../../../style.css">
+ <META NAME="GENERATOR" CONTENT="LinuxDoc-Tools 0.9.50">
+ <TITLE>DOMjudge Administrator's Manual: Common problems and their solutions </TITLE>
+ <LINK HREF="admin-manual-8.html" REL=next>
+ <LINK HREF="admin-manual-6.html" REL=previous>
+ <LINK HREF="admin-manual.html#toc7" REL=contents>
+</HEAD>
+<BODY>
+<A HREF="admin-manual-8.html">Next</A>
+<A HREF="admin-manual-6.html">Previous</A>
+<A HREF="admin-manual.html#toc7">Contents</A>
+<HR>
+<H2><A NAME="problems"></A> <A NAME="s7">7.</A> <A HREF="admin-manual.html#toc7">Common problems and their solutions </A></H2>
+
+
+
+
+<H2><A NAME="problems:java-chroot"></A> <A NAME="ss7.1">7.1</A> <A HREF="admin-manual.html#toc7.1">Java compilers and the chroot </A>
+</H2>
+
+
+<P>Java is difficult to deal with in an automatic way. It is probably
+most preferable to use Sun Java, because that's the version
+contestants will be used to. The GNU Compiler for Java (GCJ) is easier
+to deal with but may lack some features.</P>
+<P>With the default configuration, submitted programs are run within a minimal
+chroot environment. For this the programs have to be statically
+linked, because they do not have access to shared libraries.</P>
+<P>For most languages compilers support this, but for Java, this is a bit
+problematic. The Sun Java compiler `javac' is not a real compiler:
+a bytecode interpreter `java' is needed to run the binaries and thus
+this cannot simply run in a chroot environment.</P>
+<P>There are some options to support Java as a language:
+<OL>
+<LI> One can disable the chroot environment in
+<CODE>etc/judgehost-config.php</CODE> by disabling <CODE>USE_CHROOT</CODE>.
+Disabling the chroot environment removes this extra layer of
+security against submissions that attempt to
+cheat, but it is a simple solution to getting Java to work.</LI>
+<LI> Next, one can build a bigger chroot environment which contains
+all necessary ingredients to let Sun Java work within it.
+DOMjudge supports this with some manual setup.
+
+First of all, a chroot tree with Java support must be created.
+The script <CODE>bin/dj_make_chroot</CODE> creates one from Debian GNU/Linux
+sources; run that script without arguments for basic usage
+information. Next, edit the script <CODE>lib/judge/chroot-startstop.sh</CODE>
+and adapt it to work with your local system and uncomment the
+script in <CODE>etc/judgehost-config.php</CODE>.</LI>
+<LI> As an alternative the <CODE>gcj</CODE> compiler from GNU can be
+used instead of Sun's version. This one generates true machine
+code and can link statically. However a few function calls
+cannot be linked statically (see `GCJ compiler warnings' in
+this FAQ). Secondly, the static library <CODE>libgcj.a</CODE>
+doesn't seem to be included in all GNU/Linux distributions: at
+least not in RedHat Enterprise Linux 4.</LI>
+</OL>
+</P>
+
+<H2><A NAME="ss7.2">7.2</A> <A HREF="admin-manual.html#toc7.2">The Sun Java virtual machine (jvm) and memory limits</A>
+</H2>
+
+
+<P>DOMjudge imposes memory limits on submitted solutions. These limits
+are imposed before the compiled submissions are started. On the other
+hand, the Sun jvm is started via a compile-time generated script which
+is run as a wrapper around the program. This means that the memory
+limits imposed by DOMjudge are for the jvm and the running program
+within it. As the jvm uses approximately 300MB, this reduces the limit
+by this significant amount. See <CODE>judge/compile_java_javac.sh</CODE>
+for the implementation details.</P>
+<P>If you see error messages of the form
+<HR>
+<PRE>
+Error occurred during initialization of VM
+java.lang.OutOfMemoryError: unable to create new native thread
+</PRE>
+<HR>
+
+or
+<HR>
+<PRE>
+Error occurred during initialization of VM
+Could not reserve enough space for object heap
+</PRE>
+<HR>
+
+Then the problem is probably that the jvm needs more memory than what
+is reserved by the Java compile script. You should try to increase the
+<CODE>MEMRESERVED</CODE> variable in <CODE>judge/compile_java.sh</CODE> and
+check that the total memory limit <CODE>MEMLIMIT</CODE> in
+<CODE>etc/judgehost-config.php</CODE> is larger than <CODE>MEMRESERVED</CODE>.</P>
+
+<H2><A NAME="ss7.3">7.3</A> <A HREF="admin-manual.html#toc7.3">Java class naming</A>
+</H2>
+
+
+<P>Java requires a specific naming of the main class. When declaring the
+main class <CODE>public</CODE>, the filename must match the class name.
+Therefore one should <EM>not</EM> declare the main class public; from
+experience however, many teams do so. Secondly, the Java compiler
+generates a bytecode file depending on the class name. There are two
+ways to handle this.</P>
+<P>The simplest Java compile script <CODE>compile_java_javac.sh</CODE>
+requires the main class to be named <CODE>Main</CODE> with method
+<HR>
+<PRE>
+public static void main(String args[])
+</PRE>
+<HR>
+</P>
+<P>The alternative (and default) is to use the script
+<CODE>compile_java_javac_detect.sh</CODE>, which automatically detects the
+main class and even corrects the source filename when it is declared
+public.</P>
+<P>When using the GNU gcj compiler, the same holds and two similar
+scripts <CODE>compile_java_gcj.sh</CODE> and
+<CODE>compile_java_gcj_detect.sh</CODE> are available.</P>
+
+<H2><A NAME="ss7.4">7.4</A> <A HREF="admin-manual.html#toc7.4">GCJ compiler warnings</A>
+</H2>
+
+
+<P>When using the GNU GCJ compiler for compiling Java sources, it can
+give a whole lot of warning messages of the form
+<PRE>
+/usr/lib/gcc-lib/i386-linux/3.2.3/libgcj.a(gc_dlopen.o)(.text+0xbc):
+In function `GC_dlopen': Using 'dlopen' in statically linked
+applications requires at runtime the shared libraries from the glibc
+version used for linking
+</PRE>
+</P>
+<P>These are generated because you are trying to compile statically
+linked sources, but some functions can not be static, e.g. the
+`dlopen' function above. These are <EM>warnings</EM> and can be safely
+ignored, because under normal programming contest conditions people
+are not allowed to use these functions anyway (and they are not
+accessible within the chroot-ed environment the program is run in).</P>
+<P>To filter these warnings, take a look at
+<CODE>judge/compile_java_gcjmod.sh</CODE> and replace or symlink
+<CODE>judge/compile_java.sh</CODE> by/to this file.</P>
+
+<H2><A NAME="ss7.5">7.5</A> <A HREF="admin-manual.html#toc7.5">Error: `submit_copy.sh failed with exitcode XX'</A>
+</H2>
+
+
+<P>This error can have various causes. First of all: check the
+<CODE>submit.log</CODE> file for more complete error messages.</P>
+<P>Assuming the default configuration where submit_copy.sh uses `scp', we
+have found that shell initialisation scripts might contain statements
+which generate errors: scp runs the user's default shell when copying
+submission files and when the shell dies (e.g. because of not having a
+terminal), the copying fails.</P>
+<P>Another cause might be that you do not have automatic access to the
+team's account (e.g. using ssh keys).</P>
+
+<H2><A NAME="ss7.6">7.6</A> <A HREF="admin-manual.html#toc7.6">C#/mono support</A>
+</H2>
+
+
+<P>Using the mono compiler and runtime for C# gives rise to similar
+problems as with Java. Although the C# language has been added to
+DOMjudge, there's no support yet to run it within a chroot
+environment. So in that case, <CODE>USE_CHROOT</CODE> must be disabled.</P>
+
+<H2><A NAME="ss7.7">7.7</A> <A HREF="admin-manual.html#toc7.7">Memory limit errors in the web interface</A>
+</H2>
+
+
+<P>E.g. when uploading large testdata files, one can run into an error in
+the jury web interface of the form:
+<PRE>
+*Fatal error*: Allowed memory size of XX bytes exhausted (tried to
+allocate YY bytes) in */home/domjudge/system/lib/lib.database.php*
+on line *154*
+</PRE>
+
+This means that the PHP engine has run out of memory. The solution is
+to raise the memory limits for PHP. This can be done by either editing
+<CODE>etc/apache.conf</CODE> and raising the <CODE>memory_limit</CODE>,
+<CODE>upload_max_filesize</CODE> and <CODE>post_max_size</CODE> values under
+the jury directory or by directly editing the global Apache or
+<CODE>php.ini</CODE> configuration.</P>
+
+<H2><A NAME="runguard-rootprivs"></A> <A NAME="ss7.8">7.8</A> <A HREF="admin-manual.html#toc7.8">Compiler errors: `runguard: root privileges not dropped' </A>
+</H2>
+
+
+<P>
+<PRE>
+Compiling failed with exitcode 255, compiler output:
+/home/domjudge/system/bin/runguard: root privileges not dropped
+</PRE>
+
+When the above error occurs on submitting any source, this indicates
+that you are running the <CODE>judgedaemon</CODE> as root user. You should
+not run any part of DOMjudge as root. Either run it as yourself or
+e.g. create a user <CODE>domjudge</CODE> under which to install and run
+everything. Also do not confuse this with the <CODE>domjudge-run</CODE>
+user: this is a special user to run submissions as and should also not
+be used to run normal DOMjudge processes; this user is only for
+internal use.</P>
+
+
+<HR>
+<A HREF="admin-manual-8.html">Next</A>
+<A HREF="admin-manual-6.html">Previous</A>
+<A HREF="admin-manual.html#toc7">Contents</A>
+</BODY>
+</HTML>

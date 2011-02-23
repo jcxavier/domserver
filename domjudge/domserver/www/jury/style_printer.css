@@ -1,0 +1,5 @@
+/* $Id: style_printer.css 2035 2008-05-04 15:18:17Z kink $ */
+
+#clock, #menutop, h4, #legend { display: none;}
+h1   { font-size: x-large; }
+body { size: landscape; }

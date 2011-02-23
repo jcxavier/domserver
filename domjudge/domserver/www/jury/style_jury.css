@@ -1,0 +1,161 @@
+/* $Id: style_jury.css 3209 2010-06-12 00:13:43Z eldering $ */
+
+.balloons td {
+	padding-right: 2ex;
+	padding-bottom: 2ex;
+	border-bottom: solid 1px silver;
+	vertical-align: middle;
+}
+.frozen { font-style: italic; }
+
+.teamstatus { text-align: center; }
+.teamstatus img { vertical-align: middle; }
+
+.filename, .hostname { font-family: monospace; }
+
+.highlight { background-color: yellow; }
+
+.msgbox {
+	background-color: #fffff0;
+	border: 1px solid #f2e93a;
+}
+
+.msgbox legend {
+	background-color: #fffff0;
+	border-right: 2px solid #f2e93a;
+	border-bottom: 2px solid #f2e93a;
+}
+
+.testcases tr:hover { background: #ffffff; }
+.testcases a { color: blue; }
+.testcases td {
+	vertical-align: middle;
+	padding: 3px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.testrank {
+	line-height: 0.9;
+	border-right: 1px solid silver;
+}
+
+.testsize {
+	text-align: right;
+	font-family: monospace;
+}
+
+.testmd5 { font-family: monospace; }
+
+.testdesc {
+	border-left: 1px solid silver;
+	max-width: 400px;
+	white-space: pre;
+}
+
+/* set cell padding to 0 and <a> tag to 3 to make all of cell
+   clickable in the jury scoreboard and for all team cells */
+.scoreboard_jury td, .scoreboard_jury th { padding: 0px; }
+
+#djlogo {
+	position: absolute; right: 1ex;
+	width: 93px; height: 196px;
+}
+
+#teampicture {
+	position: absolute; right: 2ex; top: 7ex;
+	width: 35%;
+}
+
+img.picto { width: 16px; height: 16px; }
+img.smallpicto { width: 11px; height: 11px; }
+img.helpicon { cursor: help; }
+
+.sortable th { cursor: s-resize; }
+.sortable th.sorttable_sorted { cursor: n-resize; }
+.sortable th.sorttable_nosort { cursor: auto; }
+
+.judgetime { font-size: smaller; font-style: italic; }
+
+/* configchecker */
+.details {
+	margin-left: 2em; padding-left: 1ex;
+	border-left: dotted 1px gray;
+	margin-top: 1ex; margin-bottom: 1ex;}
+.O { background-color: #ccfbcc; }
+.W { background-color: #f0e68c; }
+.E { background-color: #fa9972; }
+.resulticon { text-align: center; vertical-align: top; width: 48px; }
+.configcheck { width: 95%; }
+.configcheck th { text-align: left; padding-top: 1ex; }
+
+/* team connect status/judgehost poll status */
+.team-nocon, .judgehost-nocon { color: #AAA; }
+.team-nosub, .judgehost-err   { color: red; }
+.team-nocor, .judgehost-warn  { color: yellow; }
+.team-ok,    .judgehost-ok    { color: green; }
+
+/* source code highlighting */
+.hl-default {
+    color: Black;
+}
+.hl-code {
+    color: Gray;
+}
+.hl-brackets {
+    color: Olive;
+}
+.hl-comment {
+    color: Orange;
+}
+.hl-quotes {
+    color: Red;
+}
+.hl-string {
+    color: Red;
+}
+.hl-identifier {
+    color: Blue;
+}
+.hl-builtin {
+    color: Teal;
+}
+.hl-reserved {
+    color: Green;
+}
+.hl-inlinedoc {
+    color: Blue;
+}
+.hl-var {
+    color: Navy;
+}
+.hl-url {
+    color: Blue;
+}
+.hl-special {
+    color: Navy;
+}
+.hl-number {
+    color: Maroon;
+}
+.hl-inlinetags {
+    color: Blue;
+}
+.hl-main {
+    background-color: White;
+}
+.hl-gutter {
+    background-color: #999999;
+    color: White
+}
+.hl-table {
+    font-family: courier, monospace;
+    font-size: 12px;
+    border: solid 1px silver;
+}
+
+.lineno { color: gray; }
+
+.col1 { float: left;  width: 30%; }
+.col2 { float: right; width: 70%; }
+.nomorecol { clear: left; }

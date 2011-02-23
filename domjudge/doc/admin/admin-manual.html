@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<LINK REL="stylesheet" HREF="../../../style.css">
+ <META NAME="GENERATOR" CONTENT="LinuxDoc-Tools 0.9.50">
+ <TITLE>DOMjudge Administrator's Manual</TITLE>
+ <LINK HREF="admin-manual-1.html" REL=next>
+
+
+</HEAD>
+<BODY>
+<A HREF="admin-manual-1.html">Next</A>
+Previous
+Contents
+<HR>
+<H1>DOMjudge Administrator's Manual</H1>
+
+<H2>by the DOMjudge team</H2>$Date: 2010-12-05 16:53:01 +0100 (Sun, 05 Dec 2010) $
+<HR>
+<EM>This document provides information about DOMjudge installation,
+configuration and operation for the DOMjudge administrator. A separate
+manual is available for teams and for jury members.
+Document version: $Rev: 3488 $</EM>
+<HR>
+<P>
+<H2><A NAME="toc1">1.</A> <A HREF="admin-manual-1.html">DOMjudge overview </A></H2>
+
+<UL>
+<LI><A NAME="toc1.1">1.1</A> <A HREF="admin-manual-1.html#ss1.1">Features</A>
+<LI><A NAME="toc1.2">1.2</A> <A HREF="admin-manual-1.html#ss1.2">Requirements</A>
+<LI><A NAME="toc1.3">1.3</A> <A HREF="admin-manual-1.html#ss1.3">Copyright and licencing</A>
+<LI><A NAME="toc1.4">1.4</A> <A HREF="admin-manual-1.html#ss1.4">Contact</A>
+</UL>
+<P>
+<H2><A NAME="toc2">2.</A> <A HREF="admin-manual-2.html">Installation and configuration </A></H2>
+
+<UL>
+<LI><A NAME="toc2.1">2.1</A> <A HREF="admin-manual-2.html#ss2.1">Quick installation</A>
+<LI><A NAME="toc2.2">2.2</A> <A HREF="admin-manual-2.html#ss2.2">Concepts</A>
+<LI><A NAME="toc2.3">2.3</A> <A HREF="admin-manual-2.html#ss2.3">Requirements </A>
+<LI><A NAME="toc2.4">2.4</A> <A HREF="admin-manual-2.html#ss2.4">Installation system </A>
+<LI><A NAME="toc2.5">2.5</A> <A HREF="admin-manual-2.html#ss2.5">Configuration</A>
+<LI><A NAME="toc2.6">2.6</A> <A HREF="admin-manual-2.html#ss2.6">Configuration of languages</A>
+<LI><A NAME="toc2.7">2.7</A> <A HREF="admin-manual-2.html#ss2.7">Configuration of special run and compare programs</A>
+<LI><A NAME="toc2.8">2.8</A> <A HREF="admin-manual-2.html#ss2.8">Alerting system</A>
+<LI><A NAME="toc2.9">2.9</A> <A HREF="admin-manual-2.html#ss2.9">Other configurable scripts</A>
+<LI><A NAME="toc2.10">2.10</A> <A HREF="admin-manual-2.html#ss2.10">Submission methods </A>
+<LI><A NAME="toc2.11">2.11</A> <A HREF="admin-manual-2.html#ss2.11">Database installation</A>
+<LI><A NAME="toc2.12">2.12</A> <A HREF="admin-manual-2.html#ss2.12">Web server configuration</A>
+<LI><A NAME="toc2.13">2.13</A> <A HREF="admin-manual-2.html#ss2.13">Logging &amp; debugging</A>
+<LI><A NAME="toc2.14">2.14</A> <A HREF="admin-manual-2.html#ss2.14">Installation of a judgehost</A>
+<LI><A NAME="toc2.15">2.15</A> <A HREF="admin-manual-2.html#ss2.15">Building and installing the submit client</A>
+<LI><A NAME="toc2.16">2.16</A> <A HREF="admin-manual-2.html#ss2.16">(Re)generating documentation and the team manual</A>
+<LI><A NAME="toc2.17">2.17</A> <A HREF="admin-manual-2.html#ss2.17">Optional features</A>
+<LI><A NAME="toc2.18">2.18</A> <A HREF="admin-manual-2.html#ss2.18">Upgrading</A>
+</UL>
+<P>
+<H2><A NAME="toc3">3.</A> <A HREF="admin-manual-3.html">Setting up a contest </A></H2>
+
+<UL>
+<LI><A NAME="toc3.1">3.1</A> <A HREF="admin-manual-3.html#ss3.1">Configure the contest data </A>
+<LI><A NAME="toc3.2">3.2</A> <A HREF="admin-manual-3.html#ss3.2">Contest milestones</A>
+<LI><A NAME="toc3.3">3.3</A> <A HREF="admin-manual-3.html#ss3.3">Team authentication </A>
+<LI><A NAME="toc3.4">3.4</A> <A HREF="admin-manual-3.html#ss3.4">Providing testdata </A>
+<LI><A NAME="toc3.5">3.5</A> <A HREF="admin-manual-3.html#ss3.5">Start the daemons</A>
+<LI><A NAME="toc3.6">3.6</A> <A HREF="admin-manual-3.html#ss3.6">Check that everything works</A>
+<LI><A NAME="toc3.7">3.7</A> <A HREF="admin-manual-3.html#ss3.7">Testing jury solutions</A>
+</UL>
+<P>
+<H2><A NAME="toc4">4.</A> <A HREF="admin-manual-4.html">Team Workstations</A></H2>
+
+<P>
+<H2><A NAME="toc5">5.</A> <A HREF="admin-manual-5.html">Web interface</A></H2>
+
+<UL>
+<LI><A NAME="toc5.1">5.1</A> <A HREF="admin-manual-5.html#ss5.1">Jury and Administrator view</A>
+<LI><A NAME="toc5.2">5.2</A> <A HREF="admin-manual-5.html#ss5.2">The scoreboard </A>
+<LI><A NAME="toc5.3">5.3</A> <A HREF="admin-manual-5.html#ss5.3">Balloons</A>
+</UL>
+<P>
+<H2><A NAME="toc6">6.</A> <A HREF="admin-manual-6.html">Security </A></H2>
+
+<UL>
+<LI><A NAME="toc6.1">6.1</A> <A HREF="admin-manual-6.html#ss6.1">Considerations</A>
+<LI><A NAME="toc6.2">6.2</A> <A HREF="admin-manual-6.html#ss6.2">Internal security </A>
+<LI><A NAME="toc6.3">6.3</A> <A HREF="admin-manual-6.html#ss6.3">Root privileges </A>
+<LI><A NAME="toc6.4">6.4</A> <A HREF="admin-manual-6.html#ss6.4">File system privileges </A>
+<LI><A NAME="toc6.5">6.5</A> <A HREF="admin-manual-6.html#ss6.5">External security </A>
+</UL>
+<H2>Appendix</H2>
+<P>
+<H2><A NAME="toc7">7.</A> <A HREF="admin-manual-7.html">Common problems and their solutions </A></H2>
+
+<UL>
+<LI><A NAME="toc7.1">7.1</A> <A HREF="admin-manual-7.html#ss7.1">Java compilers and the chroot </A>
+<LI><A NAME="toc7.2">7.2</A> <A HREF="admin-manual-7.html#ss7.2">The Sun Java virtual machine (jvm) and memory limits</A>
+<LI><A NAME="toc7.3">7.3</A> <A HREF="admin-manual-7.html#ss7.3">Java class naming</A>
+<LI><A NAME="toc7.4">7.4</A> <A HREF="admin-manual-7.html#ss7.4">GCJ compiler warnings</A>
+<LI><A NAME="toc7.5">7.5</A> <A HREF="admin-manual-7.html#ss7.5">Error: `submit_copy.sh failed with exitcode XX'</A>
+<LI><A NAME="toc7.6">7.6</A> <A HREF="admin-manual-7.html#ss7.6">C#/mono support</A>
+<LI><A NAME="toc7.7">7.7</A> <A HREF="admin-manual-7.html#ss7.7">Memory limit errors in the web interface</A>
+<LI><A NAME="toc7.8">7.8</A> <A HREF="admin-manual-7.html#ss7.8">Compiler errors: `runguard: root privileges not dropped' </A>
+</UL>
+<P>
+<H2><A NAME="toc8">8.</A> <A HREF="admin-manual-8.html">Multi-site contests </A></H2>
+
+<P>
+<H2><A NAME="toc9">9.</A> <A HREF="admin-manual-9.html">DOMjudge and the ICPC validator interface standard </A></H2>
+
+<P>
+<H2><A NAME="toc10">10.</A> <A HREF="admin-manual-10.html">Submitdaemon and the Dolstra protocol </A></H2>
+
+<UL>
+<LI><A NAME="toc10.1">10.1</A> <A HREF="admin-manual-10.html#ss10.1">Dolstra protocol requirements</A>
+</UL>
+<HR>
+<A HREF="admin-manual-1.html">Next</A>
+Previous
+Contents
+</BODY>
+</HTML>

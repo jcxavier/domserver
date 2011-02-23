@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<LINK REL="stylesheet" HREF="../../../style.css">
+ <META NAME="GENERATOR" CONTENT="LinuxDoc-Tools 0.9.50">
+ <TITLE>DOMjudge Administrator's Manual: DOMjudge and the ICPC validator interface standard </TITLE>
+ <LINK HREF="admin-manual-10.html" REL=next>
+ <LINK HREF="admin-manual-8.html" REL=previous>
+ <LINK HREF="admin-manual.html#toc9" REL=contents>
+</HEAD>
+<BODY>
+<A HREF="admin-manual-10.html">Next</A>
+<A HREF="admin-manual-8.html">Previous</A>
+<A HREF="admin-manual.html#toc9">Contents</A>
+<HR>
+<H2><A NAME="validator"></A> <A NAME="s9">9.</A> <A HREF="admin-manual.html#toc9">DOMjudge and the ICPC validator interface standard </A></H2>
+
+<P>DOMjudge supports the ICPC validator interface standard, which can be
+found at: 
+<A HREF="http://www.ecs.csus.edu/pc2/doc/valistandard.html">http://www.ecs.csus.edu/pc2/doc/valistandard.html</A></P>
+<P>The invocation code (<CODE>judge/testcase_run.h</CODE>) adheres to the
+invocation interface. It passes as a 5th optional parameter to the
+validator program the filename in which it expects a difference output
+between the program and jury output (parameters 2 and 3 respectively).</P>
+<P>Parsing of the result XML file (in the result interface) is done with
+the `xsltproc' program, which is part of the
+<A HREF="http://www.xmlsoft.org/XSLT/">GNOME libxslt package</A>.
+<EM>The exitcode of the validator program should be zero, otherwise
+an internal error is generated.</EM></P>
+<P>DOMjudge currently has two validator scripts: <CODE>judge/compare</CODE>
+and <CODE>judge/compare_program.sh</CODE>. The first does a compare with a
+plain diff, the second script calls an external program for checking
+(e.g. <CODE>judge/check_float</CODE> for comparison of floating point
+results). When passed a 5th parameter, this is interpreted as a
+filename to which these scripts will write a comparison of the program
+and jury output. Both scripts also generate XML compliant output,
+which is written to the result file specified in parameter 4 and fully
+complies with the validator standard.</P>
+
+<HR>
+<A HREF="admin-manual-10.html">Next</A>
+<A HREF="admin-manual-8.html">Previous</A>
+<A HREF="admin-manual.html#toc9">Contents</A>
+</BODY>
+</HTML>
