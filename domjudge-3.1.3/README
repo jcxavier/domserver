@@ -1,0 +1,84 @@
+This is the Programming Contest Jury System "DOMjudge" version 3.1.3
+
+DOMjudge is a system for running a programming contest, like the
+ACM ICPC regional and world championship programming contests.
+
+
+Documentation
+-------------
+
+For more information on installation and requirements see the
+documentation under the doc/admin directory. There are HTML and PDF
+versions of the documentation available, prebuilt from SGML sources.
+
+The doc/ directory also contains documentation for users of DOMjudge,
+namely for jury members (under doc/judge) and teams (under doc/team).
+
+The jury documentation is also available in HTML and PDF format.
+
+The team documentation is available prebuilt in PDF format, but it
+contains default/example settings. To include the correct settings for
+your local environment, DOMjudge has to be properly configured first,
+as parts of the configuration are used in it (e.g. the URL to the team
+interface of DOMjudge). A LaTeX installation including the packages
+`svn` and `expdlist` is required to rebuild the team documentation.
+For more information, see the administrator documentation.
+
+All documentation is also available online at the DOMjudge homepage:
+	http://domjudge.sourceforge.net/#documentation
+Please note that this documentation is from the daily generated
+snapshot and thus might not apply to your version.
+
+
+Copyright & Licencing
+---------------------
+
+DOMjudge is Copyright (c) 2004 - 2010 by The DOMjudge Developers.
+The DOMjudge developers are Thijs Kinkhorst, Peter van de Werken and
+Jaap Eldering. It was developed at Study Association "A-Eskwadraat",
+Utrecht University, The Netherlands.
+
+DOMjudge, including its documentation, is free software; you can
+redistribute it and/or modify it under the terms of the GNU General
+Public License as published by the Free Software Foundation; either
+version 2, or (at your option) any later version. See the file
+COPYING.
+
+Additionally, parts of this system are based on other programs, which
+are covered by other copyrights. This will be noted in the files
+themselves and these copyrights/attributions can also be found in the
+administrator manual.
+
+Furthermore, a binary version of the dash shell (statically compiled)
+is distributed with DOMjudge. This program is copyright by various
+people under the BSD licence and a part under the GNU GPL version 2,
+see doc/dash.copyright for more details.
+Sources can be downloaded from: http://domjudge.sourceforge.net/sources/
+
+The sorttable.js script is copyright by Stuart Langridge and licenced
+under the MIT/X11 licence, see COPYING.MIT. This software was
+downloaded from: http://www.kryogenix.org/code/browser/sorttable/
+jscolor.js is copyright Jan Odvarko and licenced under the GNU LGPL. 
+It was obtained at http://jscolor.com.
+
+The M4 autoconf macros are licenced under all-permissive and GPL3+
+licences; see the respective files under m4/ for details.
+
+
+Contact
+-------
+
+The DOMjudge homepage can be found at:
+http://domjudge.sourceforge.net/
+
+Announcements of new releases are sent to our low volume announcements
+mailinglist. Subscription to this list is done via
+http://lists.a-eskwadraat.nl/mailman/listinfo/domjudge-announce
+
+The developers can be reached through the mailinglist
+domjudge-devel@lists.a-eskwadraat.nl. Information, subscription
+and archives are available at:
+http://lists.a-eskwadraat.nl/mailman/listinfo/domjudge-devel
+
+
+$Id: README 3515 2010-12-21 18:49:12Z eldering $

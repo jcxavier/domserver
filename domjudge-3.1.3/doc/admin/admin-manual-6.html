@@ -1,0 +1,185 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<LINK REL="stylesheet" HREF="../../../style.css">
+ <META NAME="GENERATOR" CONTENT="LinuxDoc-Tools 0.9.50">
+ <TITLE>DOMjudge Administrator's Manual: Security </TITLE>
+ <LINK HREF="admin-manual-7.html" REL=next>
+ <LINK HREF="admin-manual-5.html" REL=previous>
+ <LINK HREF="admin-manual.html#toc6" REL=contents>
+</HEAD>
+<BODY>
+<A HREF="admin-manual-7.html">Next</A>
+<A HREF="admin-manual-5.html">Previous</A>
+<A HREF="admin-manual.html#toc6">Contents</A>
+<HR>
+<H2><A NAME="security"></A> <A NAME="s6">6.</A> <A HREF="admin-manual.html#toc6">Security </A></H2>
+
+
+<P>This judging system was developed with security as one of the main
+goals in mind. To implement this rigorously in various aspects
+(restricting team access to others and the internet, restricting
+access to the submitted programs on the jury computers, etc...)
+requires root privileges to different parts of the whole contest
+environment. Also, security measures might depend on the environment.
+Therefore we have decided not to implement security measures which are
+not directly related to the judging system itself. We do have some
+suggestions on how you can setup external security.</P>
+
+<H2><A NAME="ss6.1">6.1</A> <A HREF="admin-manual.html#toc6.1">Considerations</A>
+</H2>
+
+
+<P>Security considerations for a programming contest are a bit different
+from those in normal conditions: normally users only have to be
+protected from deliberately harming each other. During a contest we
+also have to restrict users from cooperatively communicating,
+accessing restricted resources (like the internet) and restrict user
+programs running on jury computers.</P>
+<P>We expect that chances are small that people are trying to cheat
+during a programming contest: you have to hack the system and make use
+of that within very limited time. And you have to not get caught and
+disqualified afterwards. Therefore passive security measures of
+warning people of the consequences and only check (or probe) things
+will probably be enough.</P>
+<P>However we wanted the system to be as secure as possible within
+reason. Furthermore this software is open source, so users can try to
+find weak spots before the contest.</P>
+
+<H2><A NAME="security:internal"></A> <A NAME="ss6.2">6.2</A> <A HREF="admin-manual.html#toc6.2">Internal security </A>
+</H2>
+
+
+<P>Internal security of the system relies on users not being able to get
+to any vital data (jury input/output and users' solutions). Data is
+stored in two places: files on the jury account and in the SQL
+database. Files should be protected by preventing permission to the
+relevant directories. Furthermore, the (jury) web interface offers a
+view and allows modification of a lot of sensitive data.</P>
+<P>Database access is protected by passwords. The default permissions
+allow connections from <EM>all</EM> hosts, so make sure you restrict
+this appropriately or choose strong enough passwords.</P>
+<P><EM>Note:</EM> database passwords are stored in
+<CODE>etc/dbpasswords.secret</CODE>. This file has to be
+non-readable to teams, but has to be readable to the web server to let
+the jury web interface work. A solution is to make it readable to a
+special group the web server runs as. This is done when using the
+default configuration and installation method and when <CODE>make
+install-{domserver,judgehost}</CODE> is run as root. The webserver group
+can be set with <CODE>configure --with-webserver-group=GROUP</CODE> which
+defaults to <CODE>www-data</CODE>.</P>
+<P>The jury web interface is protected by HTTP Authentication. These
+credentials are essentially sent plain-text, so we advise to setup
+HTTPS at least for the jury interface, but preferably for all web
+interfaces. By default
+the <CODE>domjudge_jury</CODE> user will be given full access. You can
+choose to add more users to the file <CODE>etc/htpasswd-jury</CODE>. In
+<CODE>etc/domserver-config.php</CODE> you can add these users to the list
+<CODE>DOMJUDGE_ADMINS</CODE>. Most data-modification functions are
+restricted to only users in this list. See also the judge manual for
+some more details.</P>
+<P>Secondly, the submitted sources should not be interceptable by other
+teams (even though that, if these would be sent clear-text, a team
+would normally need to be root/administrator on their computer to
+intercept this). This can be accomplished by using HTTPS for the web
+interface. The 
+<A HREF="admin-manual-10.html#dolstra">Dolstra submission method</A> by
+default uses SSH to send files over the network.</P>
+<P>There are multiple authentication methods for teams, each having its
+own issues to check for.</P>
+<P>When using IP address authentication, one has to be careful that teams
+are not able to spoof their IP (for which they normally need
+root/administrator privileges), as they would then be able to view
+other teams' submission info (not their code) and clarifications and
+submit as that team.
+<EM>Note:</EM> This means that care has to be taken e.g. that teams
+cannot simply login onto one another's computer and spoof their identity.</P>
+<P>When using PHP sessions, authentication data is sent via HTTP, so we
+strongly advise to use HTTPS in that case.</P>
+
+
+<H2><A NAME="security:rootprivs"></A> <A NAME="ss6.3">6.3</A> <A HREF="admin-manual.html#toc6.3">Root privileges </A>
+</H2>
+
+
+<P>A difficult issue is the securing of submitted programs run by the
+jury. We do not have any control over these sources and do not want to
+rely on checking them manually or filtering on things like system
+calls (which can be obscured and are different per language).</P>
+<P>Therefore we decided to tackle this issue by running these programs in
+a environment as restrictive as possible. This is done by setting up a
+minimal chroot environment. For this, root privileges on the judging
+computers and statically compiled programs are needed. By also
+limiting all kinds of system resources (memory, processes, time,
+unprivileged user) we protect the system from programs which try to
+hack or could crash the system.  However, a chroot environment does
+not restrict network access, so there lies a possible security risk
+that has to be handled separately.</P>
+
+<H2><A NAME="security:fileprivs"></A> <A NAME="ss6.4">6.4</A> <A HREF="admin-manual.html#toc6.4">File system privileges </A>
+</H2>
+
+
+<P>Of course you must make sure that the file system privileges are set
+such that there's no unauthorised access to sensitive data, like
+submitted solutions or passwords. This is quite system dependent. At
+least <CODE>JUDGEDIR</CODE> should not be readable by other users
+than DOMjudge.</P>
+
+<H3><A NAME="security:webprivs"></A> Permissions for the web server </H3>
+
+
+<P>Make sure that the web server serving the DOMjudge web interface pages
+has correct permissions to the <CODE>www, lib, etc</CODE>
+directory trees. The <CODE>www</CODE> and <CODE>lib</CODE> trees can safely
+set to be readable and accessible. Care should be taken with the
+<CODE>etc</CODE> dir: the <CODE>domserver-{config,static}.php</CODE>,
+<CODE>htpasswd-*</CODE> and <CODE>dbpasswords.secret</CODE> files
+should all be readable, but <CODE>dbpasswords.secret</CODE> and the
+htpasswd files should not be
+readable by anyone else. This can be done for example by setting the
+<CODE>etc</CODE> directory to owner:group &lt;DOMjudge
+account&gt;:&lt;Web server group&gt; and permissions
+<CODE>drwxr-x---</CODE>, denying users other than yourself and the
+web server group access to the configuration and password files.</P>
+<P>If you want the web server to also store incoming submission sources on
+the file system (next to the database), then <CODE>SUBMITDIR</CODE> must be
+writable for the web server, see also 
+<A HREF="admin-manual-2.html#install_config:submissionmethods">submission methods</A>.</P>
+<P>You should take care not to serve any files over the web that
+are not under the DOMjudge 'www/' directory, because they might
+contain sensitive data (e.g. those under <CODE>etc/</CODE>). DOMjudge
+comes with <CODE>.htaccess</CODE> files that try to prevent this, but
+double-check that it's not accessible.</P>
+
+<H2><A NAME="security:external"></A> <A NAME="ss6.5">6.5</A> <A HREF="admin-manual.html#toc6.5">External security </A>
+</H2>
+
+
+<P>The following security issues are <EM>not</EM> handled by DOMjudge,
+but left to the administrator to set up.</P>
+<P>Network traffic between team- and jury-computers and the internet
+should be limited to what is allowed. Possible ways of enforcing this
+might be: monitor traffic, modify firewall rules on team computers or
+(what we implemented with great satisfaction) put all team computers
+behind a firewalling router.</P>
+<P>Solutions are run within a restricted (chroot) environment on the
+judge computers. This however does not restrict network access, so a
+team could try to send in a solution that tries to send input testdata
+back to them, access the internet, etc... A solution to this problem
+is to disallow all network traffic for the test user on the judge
+computers. On Linux, this can be accomplished by modifying the
+iptables, adding a rule like:</P>
+<P>
+<PRE>
+iptables -I OUTPUT -o &lt;network_interface&gt; -m owner --uid-owner &lt;testuser_uid&gt; -j REJECT
+</PRE>
+</P>
+
+
+<HR>
+<A HREF="admin-manual-7.html">Next</A>
+<A HREF="admin-manual-5.html">Previous</A>
+<A HREF="admin-manual.html#toc6">Contents</A>
+</BODY>
+</HTML>

@@ -1,0 +1,6 @@
+$Id: test-file name#\.bogus ext 3302 2010-08-09 18:39:20Z eldering $
+
+This file tests stability of the submit client/server with regard
+to a strange filename.
+
+@EXPECTED_RESULTS@: NONE-INVALID-SUBMISSION

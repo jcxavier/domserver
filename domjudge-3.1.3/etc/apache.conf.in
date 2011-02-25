@@ -1,0 +1,115 @@
+# @configure_input@
+
+# Apache configuration for DOMjudge
+
+
+### VirtualHost config ###
+#
+# Use this VirtualHost block if you want DOMjudge to live in
+# the root of your webserver. See the Apache documentation for
+# virtualhosts for more information.
+
+# Using HTTP:
+
+#NameVirtualHost *
+#<VirtualHost *>
+#ServerName _default_
+#DocumentRoot @domserver_wwwdir@
+#</VirtualHost>
+
+# Alternatively, use HTTPS and redirect HTTP to HTTPS:
+
+#Listen 443
+#
+#<VirtualHost *:80>
+#ServerName _default_
+#Redirect permanent / https://domjudge.example.com/
+#</VirtualHost>
+#
+#<VirtualHost *:443>
+#ServerName _default_
+#DocumentRoot @domserver_wwwdir@
+#
+#SSLEngine on
+#SSLCertificateFile    /path/to/your/SSL-certificate.crt
+#SSLCertificateKeyFile /path/to/your/SSL-key.key
+#SSLCertificateChainFile /path/to/your/certificate-chain.pem
+#</VirtualHost>
+
+
+### Alias config ###
+#
+# Alternatively, use this instead of the VirtualHost above when you don't
+# want DOMjudge in the root, but only occupy a subdir, like this:
+# www.example.com/domjudge
+
+Alias /domjudge @domserver_wwwdir@
+
+
+### General options ###
+#
+# This section applies to both options above.
+
+<Directory @domserver_wwwdir@>
+allow from all
+
+Options FollowSymlinks
+DirectoryIndex index.php
+
+# Disable some evil PHP magic
+<IfModule mod_php5.c>
+php_flag magic_quotes_gpc off
+php_flag magic_quotes_runtime off
+</IfModule>
+
+</Directory>
+
+# Require authentication to jury webinterface
+<Directory @domserver_wwwdir@/jury>
+AuthType Basic
+AuthName "DOMjudge Jury Interface"
+Require valid-user
+AuthUserFile @domserver_etcdir@/htpasswd-jury
+
+# Optionally restrict access to just the jury computers:
+# deny from all
+# allow from 192.168.1.0/24
+
+# If you want to allow large file uploads for testcases, you must
+# ensure that the following PHP settings are all set to high enough
+# values. The following example will allow to upload testcases of
+# up to 16MB. Defaults for these vary per PHP version and install.
+#<IfModule mod_php5.c>
+#php_value upload_max_filesize 16M
+#php_value post_max_size       16M
+#php_value memory_limit        32M
+#</IfModule>
+
+</Directory>
+
+# Optionally enable IP-restrictions for teams, recommended if you know the
+# IP range the teams will be on.
+#<Directory @domserver_wwwdir@/team>
+# deny from all
+# allow from 10.20.30.0/24
+#</Directory>
+
+
+# Require authentication to plugin interface
+<Directory @domserver_wwwdir@/plugin>
+AuthType Basic
+AuthName "DOMjudge Plugin Interface"
+Require valid-user
+AuthUserFile @domserver_etcdir@/htpasswd-plugin
+
+# Optionally restrict access to just the relevant hosts:
+# deny from all
+# allow from 172.30.20.0/24
+</Directory>
+
+# $Id: apache.conf.in 3120 2010-02-22 23:10:26Z eldering $
+
+# vim: syntax=apachestyle
+# Local Variables:
+# mode: apache
+# end:

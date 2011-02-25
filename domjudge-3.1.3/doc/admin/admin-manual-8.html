@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<LINK REL="stylesheet" HREF="../../../style.css">
+ <META NAME="GENERATOR" CONTENT="LinuxDoc-Tools 0.9.50">
+ <TITLE>DOMjudge Administrator's Manual: Multi-site contests </TITLE>
+ <LINK HREF="admin-manual-9.html" REL=next>
+ <LINK HREF="admin-manual-7.html" REL=previous>
+ <LINK HREF="admin-manual.html#toc8" REL=contents>
+</HEAD>
+<BODY>
+<A HREF="admin-manual-9.html">Next</A>
+<A HREF="admin-manual-7.html">Previous</A>
+<A HREF="admin-manual.html#toc8">Contents</A>
+<HR>
+<H2><A NAME="multisite"></A> <A NAME="s8">8.</A> <A HREF="admin-manual.html#toc8">Multi-site contests </A></H2>
+
+
+<P>This manual assumed you are running a singe-site contest; that is, the teams
+are located closely together, probably in a single physical location. In a
+multi-site or distributed contest, teams from several remote locations use the
+same DOMjudge installation. An example is a national contest where teams can
+participate at their local institution.</P>
+<P>DOMjudge supports such a setup on the condition that a central installation of
+DOMjudge is used to which the teams connect over the internet. It is here where
+all submission processing and judging takes place. Because DOMjudge uses a web
+interface for all interactions, teams and judges will interface with the system
+just as if it were local.  Still, there are some specific considerations for a
+multi-site contest.</P>
+<P>Network: there must be a relatively reliable network connection between the
+locations and the central DOMjudge installation, because teams cannot submit or
+query the scoreboard if the network is down. Because of travelling an unsecured
+network, you may want to consider HTTPS for encrypting the traffic.  If you
+want to limit internet access, it must be done in such a way that the remote
+DOMjudge installation can still be reached.</P>
+<P>Team authentication: the IP-based authentication will still work as long as
+each team workstation has a different public IP address. If some teams are
+behind a NAT-router and thus all present themselves to DOMjudge with the same
+IP-address, the PHP sessions authentication scheme needs to be used.</P>
+<P>Judges: if the people reviewing the submissions will be located remotely as
+well, it's important to agree beforehand on who-does-what, using the
+submissions claim feature and how responding to incoming clarification requests
+is handled. Having a shared chat/IM channel may help when unexpected issues
+arise.</P>
+<P>Scoreboard: by default DOMjudge presents all teams in the same scoreboard.
+Per-site rankings are not currently possible. </P>
+
+
+<HR>
+<A HREF="admin-manual-9.html">Next</A>
+<A HREF="admin-manual-7.html">Previous</A>
+<A HREF="admin-manual.html#toc8">Contents</A>
+</BODY>
+</HTML>

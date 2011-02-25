@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<LINK REL="stylesheet" HREF="../../../style.css">
+ <META NAME="GENERATOR" CONTENT="LinuxDoc-Tools 0.9.50">
+ <TITLE>DOMjudge Jury Manual: During the contest</TITLE>
+ <LINK HREF="judge-manual-5.html" REL=next>
+ <LINK HREF="judge-manual-3.html" REL=previous>
+ <LINK HREF="judge-manual.html#toc4" REL=contents>
+</HEAD>
+<BODY>
+<A HREF="judge-manual-5.html">Next</A>
+<A HREF="judge-manual-3.html">Previous</A>
+<A HREF="judge-manual.html#toc4">Contents</A>
+<HR>
+<H2><A NAME="s4">4.</A> <A HREF="judge-manual.html#toc4">During the contest</A></H2>
+
+
+
+<H2><A NAME="ss4.1">4.1</A> <A HREF="judge-manual.html#toc4.1">Monitor teams</A>
+</H2>
+
+<P>Under the Teams menu option, you can get a general impression of the
+status of each team: a traffic light will show either of the
+following:
+<DL>
+<DT><B>gray  </B><DD>
+<P>the team has not (yet) connected to the web interface at all;</P>
+<DT><B>red   </B><DD>
+<P>the team has connected but not submitted anything yet;</P>
+<DT><B>yellow</B><DD>
+<P>one or more submissions have been made, but none correct;</P>
+<DT><B>green </B><DD>
+<P>the team has made at least one submission that has
+been judged as correct.</P>
+</DL>
+</P>
+<P>This is especially useful during the practice session, where it is
+expected that every team can make at least one correct submission. A
+team with any other colour than green near the end of the session
+might be having difficulties.</P>
+
+
+<H2><A NAME="ss4.2">4.2</A> <A HREF="judge-manual.html#toc4.2">Judging Submissions</A>
+</H2>
+
+
+
+<H3>Flow of submitted solutions </H3>
+
+
+<P>The flow of an incoming submission is as follows.</P>
+<P>
+<OL>
+<LI>Team submits solution. It will either be rejected after basic
+checks, or accepted and stored as a <EM>submission</EM>.</LI>
+<LI>The first available <EM>judgehost</EM> compiles, runs and checks
+the submission. The outcome and outputs are stored as a
+<EM>judging</EM> of this submission.</LI>
+<LI>If verification is not required, the result is automatically
+recorded and the team can view the result and the scoreboard is
+updated (unless after the scoreboard freeze). A judge can
+optionally inspect the submission and judging and mark it
+verified.</LI>
+<LI>If verification is required, a judge inspects the judging. Only
+after it has been approved (marked as <EM>verified</EM>) will
+the result be visible outside the jury interface.</LI>
+</OL>
+</P>
+
+<H3>Submission judging status codes</H3>
+
+<P>The interface for jury and teams shows the status of a submission with
+a code.
+<DL>
+<DT><B>QUEUED/PENDING</B><DD>
+<P>submission received and awaiting a judgehost to process it *;</P>
+<DT><B>JUDGING       </B><DD>
+<P>a judgehost is currently compiling/running/testing the submission *;</P>
+<DT><B>TOO-LATE      </B><DD>
+<P>submission received but submitted after the contest ended;</P>
+<DT><B>CORRECT       </B><DD>
+<P>submission correct, problem solved;</P>
+<DT><B>COMPILER-ERROR</B><DD>
+<P>the compiler gave an error while compiling the program;</P>
+<DT><B>TIMELIMIT     </B><DD>
+<P>program execution time exceeded the time defined for the problem;</P>
+<DT><B>RUN-ERROR     </B><DD>
+<P>a kind of problem while running the program occurred, for example
+segmentation fault, division by zero or exitcode unequal to 0;</P>
+<DT><B>NO-OUTPUT     </B><DD>
+<P>there was no output at all from the program;</P>
+<DT><B>WRONG-ANSWER  </B><DD>
+<P>the output of the program did not exactly match the expected output;</P>
+<DT><B>PRESENTATION-ERROR</B><DD>
+<P>the submission only had presentation errors; e.g. difference
+in whitespace with the reference output.</P>
+</DL>
+
+* in the team interface a submission will only show as PENDING to
+prevent leaking information of problem time limits. The jury can see
+whether a submission is QUEUED or JUDGING. In case of required
+verification, a submission will show as PENDING to the team until the
+judging has been verified.</P>
+<P>Under the Submissions menu, you can see submitted solutions, with
+the newest one at the top. Click on a submission line
+for more details about the submission (team name, submittime etc),
+a list of judgings and the details for the most recent judging
+(runtime, outputs, diff with testdata). There is also a switch
+available between newest 50, only unverified or all submissions.</P>
+<P>Under the submission details the source filename can be clicked to
+inspect the source code. If the team has submitted code in the same
+language for this problem before, a diff output between the current
+and previous submission is also available there.</P>
+<P>A submission can have multiple judgings, but only one valid judging at
+any time. Multiple judgings occur when rejudging, see 
+<A HREF="#rejudging">Rejudging</A>.</P>
+
+<H3><A NAME="rejudging"></A> Rejudging </H3>
+
+<P>In some situations it is necessary to rejudge a submission. This means
+that the submission will re-enter the flow as if it had not been
+judged before. The submittime will be the original time, but the
+program will be compiled, run and tested again.</P>
+<P>This can be useful when there was some kind of problem: a compiler
+that was broken and later fixed, or testdata that was incorrect and
+later changed. When a submission is rejudged, the old judging data is
+kept but marked as `invalid'.</P>
+<P>You can rejudge a single submission by pressing the `Rejudge' button
+when viewing the submission details. It is also possible to rejudge
+all submissions for a given language, problem, team or judgehost; to
+do so, go to the page of the respective language, problem, team or
+judgehost, press the `Rejudge all' button and confirm.</P>
+<P>Submissions that have been marked as `CORRECT' will not be rejudged.
+Only DOMjudge admins can override this restriction for individual
+submissions.</P>
+<P>Teams will not get explicit notifications of rejudgings, other than a
+potentially changed outcome of their submissions. It might be desirable
+to combine rejudging with a clarification to the team or all teams
+explaining what has been rejudged and why.</P>
+
+<H3>Ignored submissions</H3>
+
+<P>Finally, there is the option to <EM>ignore</EM> specific submissions
+using the button on the submission page. When a submissions is being
+ignored, it is as if was never submitted: it is not visible to the
+team that sent it nor on the scoreboard. It will show striked through
+in the jury submissions list though. This can be used to effectively
+delete a submission for some reason, e.g. when a team erroneously sent
+it for the wrong problem. The submission can also be unignored again.</P>
+
+<H2><A NAME="ss4.3">4.3</A> <A HREF="judge-manual.html#toc4.3">Clarification Requests</A>
+</H2>
+
+<P>Communication between teams and jury happens through Clarification
+Requests. Everything related to that is handled under the
+Clarifications menu item.</P>
+
+<P>Teams can use their web interface to send a clarification request to
+the jury. The jury can send a response to that team specifically, or
+send it to all teams. The latter is done to ensure that all teams have
+the same information about the problem set. The jury can also send a
+clarification that does not correspond to a specific request. These
+will be termed `general clarifications'.</P>
+
+<P>Under Clarifications, three lists are shown: new clarifications,
+answered clarifications and general clarifications. It lists the team
+login, the time and an excerpt. Click the excerpt for details about
+that clarification request.</P>
+
+<P>Every incoming clarification request will initially be marked as
+unanswered. The menu bar shows the number of unanswered requests. A
+request will be marked as answered when a response has been sent.
+Additionally it's possible to mark a clarification request as answered
+with the button that can be found when viewing the request. The latter
+can be used when the request has been dealt with in some other way,
+for example by sending a general message to all teams.</P>
+
+<P>An answer to a clarification request is made by putting the text in the
+input box under the request text. The original text is quoted. You can
+choose to either send it to the team that requested the clarification,
+or to all teams. In the latter case, make sure you phrase it in such a
+way that the message is self-contained (e.g. by keeping the quoted
+text), since the other teams cannot view the original request.</P>
+
+<P>The menu on every page of the jury interface will mention the number
+of unanswered clarification requests: ``(1 new)''. This number is
+automatically updated, even without reloading the page.</P>
+
+
+<HR>
+<A HREF="judge-manual-5.html">Next</A>
+<A HREF="judge-manual-3.html">Previous</A>
+<A HREF="judge-manual.html#toc4">Contents</A>
+</BODY>
+</HTML>
