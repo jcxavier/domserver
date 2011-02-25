@@ -1,0 +1,122 @@
+#!/usr/bin/env php
+<?php
+/**
+ * @configure_input@
+ *
+ * Program to rebuild the DB submissions table from submitted sources
+ * on the filesystem. Can be useful in case of a database crash.
+ *
+ * Does not do any checking on valid parameters (team, problem, etc.)
+ * and inserts all validly-named source files for all contests. Using
+ * InnoDB tables will provide foreign key checks.
+ *
+ * The file modification times are used as submittime, as Unix does
+ * not have file creation timestamps. Therefore it is advisable not to
+ * touch the sources in SUBMITDIR. This script tries to insert the
+ * sources with the original submission ID's, so to restore the
+ * original state, the submissions table should be empty before
+ * running this script.
+ * 
+ * $Id: restore_sources2db.in 3302 2010-08-09 18:39:20Z eldering $
+ *
+ * Part of the DOMjudge Programming Contest Jury System and licenced
+ * under the GNU GPL. See README and COPYING for details.
+ */
+if ( isset($_SERVER['REMOTE_ADDR']) ) die ("Commandline use only");
+
+require('@domserver_etcdir@/domserver-static.php');
+require(ETCDIR . '/domserver-config.php');
+
+define('SCRIPT_ID', 'restore_sources2db');
+define('LOGFILE', LOGDIR.'/auxiliary.log');
+
+require(LIBDIR . '/init.php');
+
+setup_database_connection('jury');
+
+$sourcesdir = SUBMITDIR;
+if ( ! empty($_SERVER['argv'][1]) ) $sourcesdir = $_SERVER['argv'][1];
+
+if ( !(is_dir($sourcesdir) && is_readable($sourcesdir)) ) {
+	error("'$sourcesdir' is no directory or not readable");
+}
+
+logmsg(LOG_NOTICE, "started, sources dir = '$sourcesdir'");
+
+if ( !($dh = @opendir($sourcesdir)) ) {
+	error("cannot read directory '$sourcesdir'");
+}
+
+$submissions = array();
+
+$langs = $DB->q('KEYTABLE SELECT extension AS ARRAYKEY, langid FROM language');
+
+while ( ($src = readdir($dh))!==FALSE ) {
+
+	$f = $sourcesdir . '/' . $src;
+
+	if ( !(is_file($f) && is_readable($f)) ) {
+		logmsg(LOG_DEBUG, "skipping '$src': not a readable file");
+		continue;
+	}
+
+	// Reconstruct submission data from filename and mtime
+	$fdata = explode('.',$src);
+	if ( count($fdata)!=5 ) {
+		logmsg(LOG_DEBUG, "skipping '$src': does not match pattern");
+		continue;
+	}
+	list($cid, $sid, $login, $probid, $langext) = $fdata;
+	$cid = substr($cid,1);
+	$sid = substr($sid,1);
+
+	$submittime = strftime(MYSQL_DATETIME_FORMAT,filemtime($f));
+
+	// Store in array for later sorting
+	$submissions[] = array('file'       => $f,
+	                       'cid'        => $cid,
+	                       'sid'        => $sid,
+	                       'login'      => $login,
+	                       'probid'     => $probid,
+	                       'langid'     => $langs[$langext]['langid'],
+	                       'submittime' => $submittime);
+}
+
+closedir($dh);
+
+// sort submissions on sid
+function cmpsid($a, $b) {
+	if ($a['sid'] == $b['sid']) return 0;
+	return ($a['sid'] < $b['sid']) ? -1 : 1;
+}
+usort($submissions, 'cmpsid');
+
+foreach ( $submissions as $s ) {
+
+	$cid    = $s['cid'];
+	$sid	= $s['sid'];
+	$login  = $s['login'];
+	$probid = $s['probid'];
+	$langid = $s['langid'];
+	$src    = basename($s['file']);
+
+	// Insert submissions into the database
+	$DB->q('INSERT INTO submission
+	        (submitid,cid,teamid,probid,langid,submittime,sourcecode)
+	        VALUES (%i, %i, %s, %s, %s, %s, %s)',
+	       $sid, $cid, $login, $probid, $langid, $s['submittime'],
+	       getFileContents($s['file'], false));
+
+	// Log to event table
+	$DB->q('INSERT INTO event (eventtime, cid, teamid, langid,
+ 	                           probid, submitid, description)
+	        VALUES(%s, %i, %s, %s, %s, %i, "problem submitted")',
+	       $s['submittime'], $cid, $login, $langid, $probid, $sid);
+
+	logmsg(LOG_INFO, "inserted $login/$probid/$langid, file $src, id s$sid/c$cid");
+}
+
+logmsg(LOG_NOTICE, "finished, restored " . count($submissions) .
+       " submissions to database.");
+
+exit;

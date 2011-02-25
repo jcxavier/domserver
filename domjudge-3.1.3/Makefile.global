@@ -1,0 +1,85 @@
+# Global Makefile
+#
+# $Id: Makefile.global 3306 2010-08-09 18:54:15Z eldering $
+#
+# Put here all things that need or can be defined globally, like
+# standard targets (clean, etc.) and global variables.
+
+# Prevent this file from being included more than once
+ifndef GLOBALINCLUDED
+GLOBALINCLUDED=1
+
+# Check for QUIET environment variable:
+ifneq ($(QUIET),)
+QUIET=1
+MAKEFLAGS += --no-print-directory --quiet
+endif
+
+# Define the 'default' target here: because of inclusion of this file,
+# it will be the default target in all subdirectories and we default to
+# no automatic targets when calling 'make' unless overridden.
+default:
+
+# Include variables set by configure:
+ifneq ($(wildcard $(TOPDIR)/paths.mk),)
+include $(TOPDIR)/paths.mk
+endif
+
+# Install settings
+INSTALL         = install
+INSTALL_PROG    = $(INSTALL)
+INSTALL_SCRIPT  = $(INSTALL)
+INSTALL_DATA    = $(INSTALL) -m 0644
+INSTALL_USER    = $(INSTALL) -m 0644 -o $(DOMJUDGE_USER)
+INSTALL_WEBSITE = $(INSTALL) -m 0644 -o $(DOMJUDGE_USER) -g $(WEBSERVER_GROUP)
+INSTALL_DIR     = mkdir -p
+
+# Check whether we are running under Cygwin:
+ifneq ($(findstring CYGWIN,$(shell uname)),)
+CYGWIN = 1
+endif
+
+# Library objects required in multiple places:
+LIBSBASE   = $(addprefix $(TOPDIR)/lib/,lib.error lib.misc lib.config)
+LIBHEADERS = $(addsuffix .h,$(LIBSBASE))
+LIBOBJECTS = $(addsuffix $(OBJEXT),$(LIBSBASE))
+LIBFILES   = $(LIBOBJECTS) $(LIBHEADERS)
+CFLAGS   += -I$(TOPDIR)/lib
+CXXFLAGS += -I$(TOPDIR)/lib
+
+$(LIBOBJECTS): %$(OBJEXT): %.c %.h
+	$(MAKE) -C $(TOPDIR)/lib $(notdir $@)
+
+# Default recursive targets; these should always at least call the
+# TARGET-l variant:
+REC_TARGETS += dist clean distclean maintainer-clean
+
+# Recursive rule, runs in depth-first traversal. TARGET-l is the local
+# variant that is called after traversing all subdirectories.
+$(REC_TARGETS): %:
+	@[ -n "$(QUIET)" -o -z "$(SUBDIRS)" ] || echo "Recursing target \`$@' into:" $(SUBDIRS)
+	@for dir in $(SUBDIRS) ; do $(MAKE) -C $$dir $@ || exit 1 ; done
+	$(MAKE) $@-l
+
+# Predefine local variants of recursive targets, so that they are
+# available from the above call:
+dist-l:
+
+clean-l:
+
+distclean-l: clean-l clean-backupfiles
+
+maintainer-clean-l: distclean-l
+
+clean-backupfiles:
+	rm -f *~
+
+.PHONY: default $(REC_TARGETS) $(addsuffix -l,$(REC_TARGETS)) \
+        check config clean-backupfiles \
+        clean clean-l distclean distclean-l maintainer-clean maintainer-clean-l
+
+endif # GLOBALINCLUDED
+
+# Local Variables:
+# mode: makefile
+# end:

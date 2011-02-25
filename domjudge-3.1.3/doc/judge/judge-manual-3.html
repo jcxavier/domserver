@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<LINK REL="stylesheet" HREF="../../../style.css">
+ <META NAME="GENERATOR" CONTENT="LinuxDoc-Tools 0.9.50">
+ <TITLE>DOMjudge Jury Manual: Before the contest</TITLE>
+ <LINK HREF="judge-manual-4.html" REL=next>
+ <LINK HREF="judge-manual-2.html" REL=previous>
+ <LINK HREF="judge-manual.html#toc3" REL=contents>
+</HEAD>
+<BODY>
+<A HREF="judge-manual-4.html">Next</A>
+<A HREF="judge-manual-2.html">Previous</A>
+<A HREF="judge-manual.html#toc3">Contents</A>
+<HR>
+<H2><A NAME="s3">3.</A> <A HREF="judge-manual.html#toc3">Before the contest</A></H2>
+
+
+<P>Before the contest starts, a number of things will need to be
+configured by the administrator. You can check that information,
+such as the problem set(s), test data and time limits, contest
+start- and end time, the time at which the scoreboard will be
+frozen and unfrozen, all from the links from the front page.</P>
+<P>Note that multiple contests can be defined, with corresponding
+problem sets, for example a practice session and the real contest.</P>
+
+<H2><A NAME="ss3.1">3.1</A> <A HREF="judge-manual.html#toc3.1">Problems and languages</A>
+</H2>
+
+
+<P>The problem sets are listed under `Problems'. It is possible to change
+whether teams can submit solutions for that problem (using the toggle
+switch `allow submit'). If disallowed, submissions for that problem
+will be rejected, but more importantly, teams will not see that
+problem on the scoreboard. Disallow judge will make DOMjudge accept
+submissions, but leave them queued; this is useful in case an
+unexpected problem shows up with one of the problems. Timelimit is the
+maximum number of seconds a submission for this problem is allowed to
+run before a `TIMELIMIT' response is given (multiplied by the language
+factor).</P>
+<P>The `Languages' overview is quite the same. It has a timefactor
+column; submissions in a language that has time factor 2 will be
+allowed to run twice the time that has been specified under Problems.
+This can be used to compensate for the execution speed of a language,
+e.g. Java.</P>
+
+<H2><A NAME="ss3.2">3.2</A> <A HREF="judge-manual.html#toc3.2">Verifying testdata</A>
+</H2>
+
+
+<P>DOMjudge comes with some small tools to check for mistakes in the
+testdata. These tools are all located in the <CODE>misc-tools</CODE>
+directory in the source tree.</P>
+<P>
+<DL>
+<DT><B>checkinput checkinput.awk fixinput.awk</B><DD>
+<P>The 'checkinput' programs are meant to check testdata input (and
+optionally also output). They check for simple layout issues like
+leading and trailing whitespace, non-printable characters, etc.
+There's both a C program and AWK script which do essentially the same
+thing. See 'checkinput.c' for details. All scripts take a testdata
+file as argument. The 'fixinput.awk' script corrects some of these
+problems.</P>
+
+<DT><B>checktestdata</B><DD>
+<P>This program can be used as a more advanced replacement of checkinput.
+It allows you to not only check on simple (spacing) layout errors, but
+a simple grammar file must be specified for the testdata, according to
+which the testdata is checked. This allows e.g. for bounds checking.
+See 'checktestdata.cpp' for a grammar specification. Two sample
+scripts 'checktestdata.{hello,fltcmp}' are provided for the sample
+problems 'hello' and 'fltcmp'.</P>
+<P>This program can also be useful as a syntax checker for a special
+compare script: it can easily handle the tedious task of verifying
+that a team's submission output is syntactically valid, leaving just
+the task of semantic validation to another program. When you want to
+support `presentation error' as a verdict, also in variable output
+problems, the option <CODE>--whitespace-ok</CODE> can be useful. This
+allows any non-empty sequence of whitespace (no newlines though) where
+the <CODE>SPACE</CODE> command is used, as well as leading and trailing
+whitespace on lines (when using the <CODE>NEWLINE</CODE> command). Please
+note that with this option enabled, whitespace matching is greedy, so
+the script code
+<HR>
+<PRE>
+INT(1,2) SPACE SPACE INT(1,2)
+</PRE>
+<HR>
+
+does <EM>not</EM> match <CODE>1__2</CODE> (where the two underscores
+represent spaces), because the first <CODE>SPACE</CODE> command already
+matches both, so the second cannot match anything.</P>
+</DL>
+</P>
+
+<H2><A NAME="ss3.3">3.3</A> <A HREF="judge-manual.html#toc3.3">Testing jury solutions</A>
+</H2>
+
+
+<P>Before a contest, you will want to have tested your reference
+solutions on the system to see whether those are judged as expected
+and maybe use their runtimes to set timelimits for the problems.
+There is no special method to test such solutions; the easiest way is
+to submit these as a special team before the contest. This requires
+some special care and coordination with the contest administrator. See
+the administrator's manual for more details.</P>
+
+<H2><A NAME="ss3.4">3.4</A> <A HREF="judge-manual.html#toc3.4">Practice Session</A>
+</H2>
+
+
+<P>If your contest has a test session or practice contest, use it also as
+a general rehearsal of the jury system: judge test submissions as you
+would do during the real contest and answer incoming clarification
+requests.</P>
+
+
+<HR>
+<A HREF="judge-manual-4.html">Next</A>
+<A HREF="judge-manual-2.html">Previous</A>
+<A HREF="judge-manual.html#toc3">Contents</A>
+</BODY>
+</HTML>

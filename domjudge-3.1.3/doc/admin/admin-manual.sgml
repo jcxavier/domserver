@@ -1,0 +1,2364 @@
+<!doctype linuxdoc system>
+<!--
+ $Id: admin-manual.sgml 3488 2010-12-05 15:53:01Z eldering $
+
+ DOMjudge Administrator's Manual
+ This manual is part of the DOMjudge Programming Contest Jury System
+ and licenced under the GNU GPL. See README and COPYING for details.
+
+-->
+<report>
+
+<title>DOMjudge Administrator's Manual
+<author>by the DOMjudge team
+<date>$Date: 2010-12-05 16:53:01 +0100 (Sun, 05 Dec 2010) $
+
+<abstract>
+This document provides information about DOMjudge installation,
+configuration and operation for the DOMjudge administrator. A separate
+manual is available for teams and for jury members.
+
+Document version: $Rev: 3488 $
+</abstract>
+
+<toc>
+
+<chapt>DOMjudge overview <label id="overview">
+<p>
+
+DOMjudge is a system for running programming contests like the ACM
+regional and world championship programming contests.
+
+This means that teams are on-site and have a fixed time period (mostly
+5 hours) and one computer to solve a number of problems (mostly 6-10).
+Problems are solved by writing a program in one of the allowed
+languages, that reads input according to the problem input
+specification and writes the correct, corresponding output.
+
+The judging is done by submitting the source code of the solution to
+the jury. There the jury system compiles and runs the program and
+compares the program output with the expected output.
+
+This software can be used to handle the submission and judging during
+such contests. It also handles feedback to the teams and communication
+on problems (clarification requests). It has web interfaces for the
+jury, the teams (their submissions and clarification requests) and the
+public (scoreboard).
+
+<sect>Features
+<p>
+
+A global overview of the features that DOMjudge provides:
+<itemize>
+<item>Automatic judging with distributed (scalable) judge hosts
+<item>Web interface for portability and simplicity
+<item>Modular system for plugging in languages/compilers and more
+<item>Detailed jury information (submissions, judgings) and options
+      (rejudge, clarifications)
+<item>Designed with security in mind
+<item>Has been used in many live contests
+<item>Open Source, Free Software
+</itemize>
+
+
+<sect>Requirements
+<p>
+
+This is a (rough) list of the requirements for DOMjudge.
+
+<itemize>
+<item>At least one machine running Linux, with local root access
+<item>Apache web server with PHP 5 and PHP-command line interface
+<item>MySQL database server version 4.1.0 or newer
+<item>Compilers for the languages you want to support
+</itemize>
+
+A <ref id="install_config:requirements" name="detailed list of requirements">
+is contained in the <ref id="install_config" name="Installation and Configuration">
+chapter.
+
+<sect>Copyright and licencing
+<p>
+
+DOMjudge was developed by Thijs Kinkhorst, Peter van de Werken and
+Jaap Eldering at Study Association <htmlurl name="A-Eskwadraat"
+url="http://www.a-eskwadraat.nl/">, <htmlurl name="Utrecht University"
+url="http://www.uu.nl/">, The Netherlands.
+
+It is Copyright (c) 2004 - 2010 by The DOMjudge Developers.
+
+DOMjudge, including its documentation, is free software; you can redistribute
+it and/or modify it under the terms of the <url name="GNU General Public License"
+url="http://www.gnu.org/copyleft/gpl.html"> as published by the Free Software
+Foundation; either version 2, or (at your option) any later version. See the
+file COPYING.
+
+This software is partly based on code by other people. These
+acknowledgements are made in the respective files, but we would like
+to name them here too:
+<itemize>
+<item> dash (i386) is included, built from the Debian dash sources
+       (copyright various people, see <tt>doc/dash.copyright</tt>).
+<item> mkstemps.h and basename.h are modified versions from the
+       GNU libiberty library (copyright Free Software Foundation).
+<item> lib.database.php by Jeroen van Wolffelaar et al.
+<item> submit.cc and submitdaemon.cc are based on submit.pl and
+       submitdaemon.pl by Eelco Dolstra.
+<item> runguard.c was originally based on timeout from The
+       Coroner's Toolkit by Wietse Venema.
+<item> sorttable.js by Stuart Langridge.
+<item> jscolor.js by Jan Odvarko. 
+<item> The DOMjudge logo is based on the NKP 2004 logo made by
+       Erik van Sebille.
+<item> Several M4 autoconf macros from the <htmlurl name="Autoconf archive"
+       url="http://www.nongnu.org/autoconf-archive/"> by various
+       people are included under <tt>m4/</tt>.
+</itemize>
+
+<sect1>Non-GPL licenced parts of DOMjudge
+<p>
+
+A binary version of the dash shell (statically compiled)
+is distributed with DOMjudge. This program is copyright by various
+people under the BSD licence and a part under the GNU GPL version 2,
+see <tt>COPYING.BSD</tt> and <tt>doc/dash.copyright</tt> for more details.
+Sources can be downloaded from:
+<url url="http://domjudge.sourceforge.net/sources/">.
+
+The <tt>sorttable.js</tt> script is copyright by Stuart Langridge and
+licenced under the MIT/X11 licence, see <tt>COPYING.MIT</tt>. This
+software was downloaded from:
+<url url="http://www.kryogenix.org/code/browser/sorttable/">.
+jscolor.js is copyright Jan Odvarko and licenced under the GNU LGPL. 
+It was obtained at <url url="http://jscolor.com">.
+
+The M4 autoconf macros are licenced under all-permissive and GPL3+
+licences; see the respective files for details.
+
+<sect1>About the name and logo
+<p>
+
+The name of this judging system is inspired by a very important and
+well known landmark in the city of Utrecht: the dome tower, called the
+`Dom' in Dutch. The original logo of the 2004 Dutch Programming
+Championships (for which this system was originally developed) depicts
+a representation of the Dom in zeros and ones. We based the name and
+logo of DOMjudge on that.
+
+We would like to thank Erik van Sebille, the original creator of the
+logo. The logo is under a GPL licence, but Erik suggested a "free as
+in beer" licence first: you're allowed to use it, but you owe Erik a
+free beer in case might you encounter him.
+
+<sect>Contact
+<p>
+The DOMjudge homepage can be found at:
+<htmlurl name="http://domjudge.sourceforge.net/"
+url="http://domjudge.sourceforge.net/">
+
+We have a low volume <htmlurl name="mailing list for announcements"
+url="http://lists.a-eskwadraat.nl/mailman/listinfo/domjudge-announce">
+of new releases.
+
+The authors can be reached through the development mailing list:
+<htmlurl name="domjudge-devel@lists.a-eskwadraat.nl"
+url="mailto:domjudge-devel@lists.a-eskwadraat.nl">. See
+<htmlurl name="the list information page"
+url="http://lists.a-eskwadraat.nl/mailman/listinfo/domjudge-devel">
+for details.
+
+
+<chapt>Installation and configuration <label id="install_config">
+<p>
+This chapter details a fresh installation of DOMjudge. The first
+section is a Quick Installation Reference, but that should only be
+used by those already acquainted with the system. A detailed guide
+follows after that.
+
+
+<sect>Quick installation
+<p>
+<em>Note:</em> this is not a replacement for the thorough installation
+instructions below, but more a cheat-sheet for those who've already
+installed DOMjudge before and need a few hints. When in doubt, always
+consult the full installation instruction.
+
+
+External software:
+<itemize>
+<item> Install the MySQL-server, set a root password for it and
+       make it accessible from all judgehosts.
+<item> Install Apache, PHP and (recommended) phpMyAdmin.
+<item> Make sure PHP works for the web server and command line scripts.
+<item> Install necessary compilers on the judgehosts.
+<item> See also <ref id="install_config:apt-getinstall"
+       name="an example command line for Debian GNU/Linux">.
+</itemize>
+
+DOMjudge:
+<itemize>
+<item> Extract the source tarball and run <tt>./configure
+       [--enable-fhs] --prefix=&lt;basepath&gt;</tt>.
+<item> Run <tt>make domserver judgehost docs</tt> or just those
+       targets you want installed on the current host.
+<item> Run <tt>make install-{domserver,judgehost,docs}</tt>
+       as root to install the system.
+</itemize>
+On the domserver host:
+<itemize>
+<item> Install the MySQL database using <tt>bin/dj-setup-database -u root -r
+       install</tt> on the domserver host.
+<item> Add <tt>etc/apache.conf</tt> to your Apache configuration, edit
+       it to your needs, reload web server:
+       <tt>
+       sudo ln -s .../domserver/etc/apache.conf /etc/apache2/conf.d/domjudge.conf &&
+       sudo apache2ctl graceful
+       </tt>
+
+
+<item> Check that the web interface works (/team, /public and /jury)
+       and check that the jury interface is password protected.
+       Optionally add (more) users to <tt>etc/htpasswd-{jury,plugin}</tt>.
+<item> Add useful contest data through the jury web interface or with
+       phpMyAdmin.
+<item> Run the config checker in the jury web interface.
+</itemize>
+On the judgehosts:
+<itemize>
+<!-- NOTE: update this, then also update the copy of this under chapter 2.14 -->
+<item> RedHat: <tt>useradd -d /nonexistent -g nobody -M -n -s /bin/false domjudge-run</tt><newline>
+       Debian: <tt>useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run</tt><newline>
+       (check specific options of useradd, since these vary per system)
+<item> Copy the file <tt>etc/dbpasswords.secret</tt> from the
+       domserver to all judgehosts to synchronise database passwords.
+<item> Start the judge daemon: <tt>bin/judgedaemon</tt>
+</itemize>
+It should be done by now. As a check that (almost) everything works,
+the set of test sources can be submitted:
+<code>
+cd tests
+make check
+./check-judgings
+</code>
+The <tt>check-judgings</tt> script automatically verifies most of the
+test sources, except for a few with multiple possible outcomes; these
+have to be verified by hand. Read the sources for a description of
+what should (not) happen.
+You may want to change the <tt>AUTH_METHOD</tt> to <tt>FIXED</tt> and set the
+environment variable <tt>SUBMITBASEURL</tt> to your DOMjudge base URL, e.g.
+<tt>http://domjudge.example.com/</tt>.
+
+Optionally:
+<itemize>
+<item> Install the submit client on the team workstations.
+<item> Generate one-time passwords for all the teams in the web interface.
+<item> Further tighten the security of the system, e.g. by applying
+       firewall rules.
+<item> Start the balloon notification daemon: <tt>cd bin; ./balloons</tt>;
+       or use the balloon web interface.
+<item> Setup the Java chroot environment on the judgehosts to use Sun Java with chroot:<newline>
+       <tt>bin/dj_make_chroot &lt;chrootdir&gt; &lt;architecture&gt;</tt><newline>
+       <tt>$EDITOR judge/chroot-startstop.sh</tt><newline>
+       enable the <tt>chroot-startstop.sh</tt> script in <tt>etc/judgehost-config.php</tt>
+       and add the following lines to <tt>/etc/sudoers</tt>:<newline><tt>
+<!-- NOTE: update this, then also update the copy of this under chapter 2.14 -->
+       domjudge ALL=(root) NOPASSWD: /bin/mount -n -t proc --bind /proc proc<newline>
+       domjudge ALL=(root) NOPASSWD: /bin/umount /*/proc<newline>
+       domjudge ALL=(root) NOPASSWD: /bin/mount --bind &lt;chrootdir&gt;/*<newline>
+       domjudge ALL=(root) NOPASSWD: /bin/umount JUDGEDIR/*</tt>
+<item> Install GeSHI or the PEAR Text_Highlighter class for source syntax
+       highlighting, and the PHP xdiff PECL extension for diffs between
+       submissions.
+</itemize>
+
+
+<sect>Concepts
+<p>
+
+This manual assumes you are aware of some of the concepts used within
+DOMjudge. Here's an overview.
+
+DOMjudge discerns three different kinds of hosts:
+<descrip>
+<tag>Team computer</tag>
+       Workstation for a team, where they develop their
+       solutions and from which they submit them to the jury system.
+       The only part of DOMjudge that runs here is the optional
+       command line submit client; all other interaction by teams is
+       done with a browser via the web interface.
+<tag>DOMjudge server</tag>
+       A host that receives the submissions, runs the
+       database and serves the web pages. This host will run Apache,
+       and MySQL. Optionally
+       these tasks can be further split out to separate machines, but
+       that's normally not necessary and not supported out of the box.
+<tag>Judgehosts</tag>
+       A number of hosts, at least one, that will retrieve
+       submitted solutions from the DOMjudge server, compile and run
+       them and send the results back to the server. Since this
+       is computationally intensive, there should ideally be at least
+       a couple of these. They will run the judgedaemon from DOMjudge.
+       For security and performance reasons it is highly recommended not
+       to use the server as a judgehost.
+</descrip>
+
+Note that the judges (persons) are not required and not recommended to
+work on any of the DOMjudge server or judgehosts. They can just access
+the system via the jury web interface and working e.g. on judgehosts
+can interfere with system stability.
+
+<sect>Requirements
+<label id="install_config:requirements">
+<p>
+
+<sect1>System requirements
+<p>
+
+The requirements for the deployment of DOMjudge are:
+
+<itemize>
+<item> Computers for the domserver and judgehosts must run Linux or a
+       Unix variant. This software has been developed mostly under
+       Debian GNU/Linux and has been tested a bit under other Linux
+       distributions and FreeBSD. We try to adhere to POSIX standards.
+
+<item> (Local) root access on the jury computers for installing some
+       programs setuid-root, some files with restricted permissions
+       and for (un)mounting the proc file system when using Sun Java.
+       See <ref id="security:rootprivs" name="Security: root privileges">
+       for more details.
+
+<item> A TCP/IP network which connects all jury and team computers.
+       Extra network security which restricts internet access and
+       access to other services (ssh, mail, talk, etc..) is advisable,
+       but not provided by this software, see <ref
+       id="security:external" name="Security: external security"> for
+       more details. TCP/IP networking is used in a few different ways:
+  <itemize>
+  <item> The judgehosts use TCP/IP connections to connect to the
+         MySQL database on port 3306.
+  <item> HTTP traffic from teams, the public and jury to the web server,
+         port 80 or 443.
+  <item> The `submit' command line client connects to the web server also
+         via HTTP.
+  </itemize>
+       When using the IP_ADDRESS authentication scheme, then each team
+       computer needs to have a unique IP address from the view of the
+       DOMjudge server, see <ref id="contestsetup:authentication"
+       name="Contest setup: team authentication"> for more details.
+</itemize>
+
+<sect1>Software requirements
+<p>
+
+The following software is required for running DOMjudge.
+<itemize>
+<item> For every supported programming language a compiler is needed;
+       preferably one that can generate statically linked stand-alone
+       executables.
+
+<item> Apache web server with support for PHP &gt;= 5.0.0 and the mysql
+       extension for PHP. We also recommend the posix extension for extra
+       debugging information.
+
+<item> MySQL &gt;= 4.1.x database and client software
+
+<item> PHP &gt;= 5.0.0 command line interface and the mysql extension.
+
+<item> Bash &gt;= 2
+
+<item> A POSIX compliant shell in <tt>/bin/sh</tt> (e.g. bash or ash)
+
+<item> A statically compiled POSIX shell, located in
+       <tt>lib/judge/sh-static</tt> (dash is included for Linux IA32)
+
+<item> glibc &gt;= 2.1
+
+<item> A lot of standard (GNU) programs, a probably incomplete list:
+       hostname, date, dirname, basename, touch, chmod, cp, mv, cat,
+       grep, diff, wc, mkdir, mkfifo, mount, sleep, head, tail, pgrep
+
+<item> Apache htpasswd
+
+<item> <htmlurl name="xsltproc" url="http://xmlsoft.org/XSLT/index.html"> 
+       from the GNOME XSLT library package.
+
+<item> A LaTeX installation to regenerate the team PDF-manual with
+       site specific configuration settings included.
+</itemize>
+
+The following items are optional, but may be required to use certain
+functionality.
+<itemize>
+<item> sudo (to use a chroot judging environment with Sun Java)
+
+<item> <htmlurl name="phpMyAdmin" url="http://www.phpmyadmin.net/">,
+       to be able to access the database in an emergency
+       or for data import/export
+
+<item> An NTP daemon (for keeping the clocks between jury
+       system and judgehosts in sync)
+
+<item> <htmlurl name="libcurl" url="http://curl.haxx.se/libcurl/">~
+       (to use the command line submit client with the web interface)
+
+<item> <htmlurl name="libmagic" url="http://www.darwinsys.com/file/">~
+       (for command line submit client to detect binary file submissions)
+
+<item> <htmlurl name="GeSHi" url="http://qbnz.com/highlighter">~
+	or
+        <htmlurl name="PEAR Text_Highlighter class"
+        url="http://pear.php.net/package/Text_Highlighter/">~
+       (to use syntax highlighting in the Show Source section of the
+        jury interface)
+
+<item> <htmlurl name="PECL xdiff extension"
+        url="http://pecl.php.net/package/xdiff">~
+       (to reliably make diffs between submissions, DOMjudge will try
+        alternative approaches if it's not available)
+
+<item> <htmlurl name="beep" url="http://www.johnath.com/beep/"> for
+       audible notification of errors, submissions and judgings, when
+       using the default <tt>alert</tt> script.
+</itemize>
+
+Software required for building DOMjudge from distributed sources.
+<itemize>
+<item> gcc and g++ with standard libraries
+
+<item> GNU make
+
+<item> The <htmlurl name="Boost" url="http://www.boost.org/">
+       <htmlurl name="regular expression library"
+        url="http://www.boost.org/doc/libs/release/libs/regex/"> and
+       the GNU <htmlurl name="Multiple Precision library"
+       url="http://gmplib.org/"> to build the <tt>checktestdata</tt>
+       program for advanced checking of input/output data correctness.
+</itemize>
+
+Additional software required for building DOMjudge from a Subversion
+checkout.
+<itemize>
+<item> The GNU autoconf/automake toolset
+
+<item> Flex and <htmlurl name="bisonc++"
+       url="http://bisoncpp.sourceforge.net/"> for generating the
+       parsing code of the optional <tt>checktestdata</tt> script.
+
+<item> Linuxdoc and Xfig/transfig to build the admin and judge
+       documentation from SGML sources and a LaTeX installation to
+       generate the PDF admin, judge and default team manual.
+</itemize>
+
+<sect1>Requirements for team workstations
+<p>
+
+In the most basic setup the team workstations only need (next to the tools needed
+for program development) a web browser. The web interface fully works with any
+known browser, with the exception of notification of new clarifications in the
+menu bar. That can be updated without reloading the page by using AJAX. This is
+supported by any reasonably current browser with JavaScript enabled.
+
+
+<label id="install_config:apt-getinstall">
+<sect1>Debian installation command
+<p>
+
+For your convenience, the following command will install needed
+software on the DOMjudge server as mentioned above when using Debian
+GNU/Linux, or one of its derivate distributions. Most systems will
+have the bulk of these packages installed already.
+
+<code>
+apt-get install gcc g++ make libcurl4-gnutls-dev mysql-server \
+	apache2 php5 php5-cli libapache2-mod-php5 php5-mysql php-geshi \
+	ntp sudo procps sharutils \
+	phpmyadmin xsltproc libboost-regex-dev libgmp3-dev \
+	linuxdoc-tools transfig texlive-latex-recommended texlive-latex-extra
+</code>
+
+This is for Debian 5.0 "Lenny", for Debian 4.0 "Etch",
+replace <tt/libcurl4-gnutls-dev/ with <tt/libcurl3-dev/.
+
+On a judgehost, the following should be sufficient. The last line shows some
+example compilers to install for C, C++, Java (GNU), Java (Sun), Haskell and
+Pascal; change the list as appropriate.
+
+<code>
+apt-get install make sudo php5-cli php5-mysql ntp xsltproc procps sharutils \
+	gcc g++ gcj openjdk-6-jre-headless ghc fp-compiler
+</code>
+
+<sect>Installation system
+<label id="install_config:installsystem">
+<p>
+
+The DOMjudge build/install system consists of a <tt>configure</tt>
+script and makefiles, but when installing it, some more care has to be
+taken than simply running '<tt>./configure &amp;&amp; make &amp;&amp;
+make install</tt>'. DOMjudge needs to be installed both on the server
+and on the judgehosts. These require different parts of the complete
+system to be present and can be installed separately. Within the build
+system these parts are referred to as <tt>domserver, judgehost</tt>
+and additionally <tt>docs</tt> for all documentation.
+
+When installing from a Subversion checkout, the configure/build system
+first has to be bootstrapped. This can be done by running <tt>make
+dist</tt>, which creates the <tt>configure</tt> script and generates
+documentation from SGML/LaTeX sources. Note that this requires
+additional software as specified in the
+<ref id="install_config:requirements" name="software requirements">.
+
+There are three different methods for installing DOMjudge:
+<descrip>
+<tag>Single directory tree</tag>
+	With this method all DOMjudge related files and programs are
+	installed in a single directory tree which is specified by the
+	prefix option of configure, like
+<code>
+./configure --prefix=$HOME/domjudge
+</code>
+	This will install each of the <tt>domserver, judgehost,
+	docs</tt> parts in a subdirectory
+	<tt>$HOME/domjudge/domserver</tt> etc. Note that these
+	subdirectories can be overridden from the defaults with options
+	like <tt>--with-domserver_root=DIR</tt>, see <tt>configure
+	--help</tt> for a complete list. The prefix defaults to
+	<tt>/opt/domjudge</tt>.
+
+	Besides the installed files, there will also be directories
+	for logging, temporary files, submitted sources and judging
+	data:
+	<descrip>
+		<tag><tt>log</tt></tag> contains all log files.
+		<tag><tt>tmp</tt></tag> contains temporary files.
+		<tag><tt>submissions</tt></tag>
+		(optionally) on the domserver contains all correctly
+		submitted files: as backup only, the database is the
+		authoritative source. Note that this directory must be
+		writable by the web server for this feature to work.
+		<tag><tt>judgings</tt></tag>
+		location on judgehosts where submissions are tested,
+		each in its own subdirectory. The system needs root
+		access to this directory! (for chroot and mounting of
+		proc-fs).
+	</descrip>
+
+	This method of installation is the default and probably most
+	practical for normal purposes as it keeps all files together,
+	hence easily found.
+
+<tag>FHS compliant</tag>
+	This method installs DOMjudge in directories according to the
+	<htmlurl name="Filesystem Hierarchy Standard"
+	url="http://www.pathname.com/fhs/">. It can be enabled by
+	passing the option <tt>--enable-fhs</tt> to <tt>configure</tt>
+	and in this case the prefix defaults to <tt>/usr/local</tt>.
+	Files will be placed e.g. in <tt>PREFIX/share/domjudge,
+	PREFIX/bin, /var/log, /tmp, /etc/domjudge</tt>.
+
+<tag>Maintainer install</tag>
+	The last installation method is meant for
+	developers/maintainers of DOMjudge and does an in-place
+	installation within the source tree. This allows one to
+	immediately see effects when modifying code.
+
+	This method requires some special steps which can most easily
+	be run via makefile rules as follows:
+<code>
+make maintainer-conf [CONFIGURE_FLAGS=&lt;extra options for ./configure&gt;]
+make maintainer-install
+</code>
+	Note that these targets have to be executed
+	<em>separately</em> and the latter requests root privileges
+	via <tt>su</tt>.
+</descrip>
+
+After running the <tt>configure</tt> script, the system can be built
+and installed. Each of the <tt>domserver, judgehost, docs</tt> parts
+can be built and installed separately, respectively by:
+<code>
+make domserver &amp;&amp; sudo make install-domserver
+make judgehost &amp;&amp; sudo make install-judgehost
+make docs &amp;&amp; make install-docs
+</code>
+Note that even when installing e.g. in your own home directory, root
+privileges are still required for domserver and judgehost
+installation, because user and group ownership of password files, some
+directories and the setuid-root program <tt>runguard</tt> have to be
+set. One should <em>not</em> run DOMjudge programs under the root user
+however, but under a normal user: <tt>runguard</tt> is specifically
+installed setuid-root to make this unnecessary and running as root
+will give rise to problems, see <ref id="runguard-rootprivs"
+name="runguard: root privileges not dropped"> in the common problems
+section.
+
+For a list of basic make targets, run <tt>make</tt> in the source root
+directory without arguments.
+
+<sect1>Makefile structure
+<p>
+
+The following information is meant for developers or other people who
+want to make changes to the sources.
+
+The Makefiles in the source tree use a recursion mechanism to run make
+targets within the relevant subdirectories. The recursion is handled
+by the <tt>REC_TARGETS</tt> and <tt>SUBDIRS</tt> variables and the
+recursion step is executed in <tt>Makefile.global</tt>. Any target
+added to the <tt>REC_TARGETS</tt> list will be recursively called in
+all directories in <tt>SUBDIRS</tt>. Moreover, a local variant of the
+target with <tt>-l</tt> appended is called after recursing into the
+subdirectories, so recursion is depth-first.
+
+The targets <tt>dist, clean, distclean, maintainer-clean</tt> are
+recursive by default, which means that these call their local
+<tt>-l</tt> variants in all directories containing a Makefile. This
+allows for true depth-first traversal, which is necessary to correctly
+run the <tt>*clean</tt> targets: otherwise e.g. <tt>paths.mk</tt> will
+be deleted before subdirectory <tt>*clean</tt> targets are called that
+depend on information in it.
+
+<sect>Configuration
+<p>
+
+Configuration of the judge system is mostly done by editing the
+configuration file(s) in <tt>etc</tt>: <tt>domserver-config.php,
+judgehost-config.php, common-config.php</tt> for the configuration
+options of the domserver, judgehost and shared configuration options
+respectively. The latter should be synchronised between domserver and
+judgehosts. Descriptions of settings are included in these files.
+
+Besides these settings, there are a few other places where changes can
+be made to the system, see <ref id="install_config:configurablescripts"
+name="other configurable scripts">.
+
+
+<sect>Configuration of languages
+<p>
+
+Configuration of the compilers of the supported languages should be
+done separately. For each supported language a shell-script named
+<tt>compile_&lt;lang&gt;.sh</tt> should be created and placed in
+<tt>lib/judge</tt> on the judgehosts, where &lt;lang&gt; is the ID of
+the language as specified in the database. For more information, see
+for example <tt>compile_c.sh</tt>, and <tt>compile.sh</tt> in
+<tt>lib/judge</tt> for syntax. Note that compile scripts are included
+for the most common languages already.
+
+Interpreted languages and non-statically linked binaries can in
+principle also be used, but then the option <tt>USE_CHROOT</tt> should
+be disabled (or all dependencies be added to the chroot environment).
+Interpreted languages do not generate an executable and in principle
+do not need a compilation step. However, to be able to use interpreted
+languages (also Sun's Java), a script must be generated during the
+compilation step, which will function as the executable: the script
+must run the interpreter on the source. See <tt>compile_perl.sh</tt>
+and <tt>compile_java_javac.sh</tt> in <tt>lib/judge</tt> for
+examples.
+
+DOMjudge supports the use of Sun Java within a chroot environment. For
+this, a chroot environment which includes the Sun Java libraries must
+first be built. This can be accomplished with the included script
+<tt>dj_make_chroot</tt>: run this as root and pass as arguments
+the target directory to build the chroot environment in and as second
+argument the target machine architecture. Start the script without
+arguments for usage information. See also sections
+<ref id="install_config:judgehost" name="Installation of a judgehost">
+and <ref id="problems:java-chroot" name="Problems: Java & chroot">.
+
+<sect>Configuration of special run and compare programs
+<p>
+
+To allow for problems that do not fit within the standard scheme of
+fixed input and/or output, DOMjudge has the possibility to change the
+way submissions are run and checked for correctness.
+
+The back-end scripts (<tt>compile.sh</tt>, <tt>testcase_run.sh</tt>)
+that handle the
+compilation, running and checking of submissions, call separate
+programs for running and comparison of the results. These can be
+specialised and adapted to the requirements per problem. For this, one
+has to create programs or scripts <tt>run_&lt;some-tag&gt;</tt> and/or
+<tt>compare_&lt;some-tag&gt;</tt> in the <tt>lib/judge</tt>
+directory (see <tt>run</tt> and <tt>compare</tt> for examples and
+usage information). Then one must specify this
+<tt>&lt;some-tag&gt;</tt> in the special_run and/or special_compare
+fields of the problem entry in the MySQL database (empty means that
+the default script should be used).
+
+Implementing a special compare script, also called a
+<em>validator</em>, can be done in two ways: either write a program
+that is called directly (by <tt>testcase_run.sh</tt>) or use (a copy
+of) the <tt>compare_program.sh</tt> script. The latter generates the
+XML result file and handles redirection of input/output for you. When
+using this wrapper (the easiest method), the jury should write a
+checker program which can be called as
+<code>
+$CHECK_PROGRAM <testdata.in> <program.out> <testdata.out>
+</code>
+and this program should write some kind of difference to stdout. No
+output results in a <em>correct</em> verdict and a nonzero exitcode in
+an internal (system) error. The script <tt>compare_program.sh</tt> as
+shipped is configured to call <tt>check_float</tt>, which compares
+floating point numbers.
+
+For example, to compare output while ignoring DOS/UNIX newline
+differences, one can copy <tt>compare_program.sh</tt> to
+<tt>compare_dos_newline_OK</tt> and in that file set the variable
+<tt>CHECK_PROGRAM="`which diff`"</tt> and replace the line
+<code>
+"$CHECK_PROGRAM" $CHECK_OPTIONS "$TESTIN" "$PROGRAM" "$TESTOUT" > "$DIFFOUT"
+</code>
+by the lines
+<code>
+sed -i 's/\r$//' "$TESTOUT"
+sed 's/\r$//' "$PROGRAM" | diff -a - "$TESTOUT" > "$DIFFOUT"
+</code>
+Note that these commands will modify the local copy of the jury
+testdata, but the original output generated by the team's solution is
+retained, and a plain diff output is generated. Next, for each problem
+that you want to use this validator for, set the
+<tt>special_compare</tt> field to <tt>dos_newline_OK</tt>. As an
+alternative to this modified validator script, one can accept
+presentation errors as correct answers by uncommenting the line
+<code>
+	'presentation-error' => 'correct',
+</code>
+in the <tt>RESULTS_REMAP</tt> array in the file
+<tt>etc/judgehost-config.php</tt>.
+
+For more details on modifying validator scripts, see the comments at the top
+of the files <tt>testcase_run.sh</tt>, <tt>compare_program.sh</tt>
+and (when not using the wrapper) the appendix on the
+<ref id="validator" name="ICPC validator interface">.
+
+DOMjudge supports a <tt>presentation-error</tt> result. The default
+<tt>compare</tt> program returns this result when output only differs
+by whitespace; this is counted as an incorrect submission. The wrapper
+script <tt>compare_program.sh</tt> does not support presentation error
+results however.
+
+<sect>Alerting system
+<p>
+
+DOMjudge includes an alerting system. This allows the administrator to
+receive alerts when important system events happen, e.g. an error
+occurs, or a submission or judging is made.
+
+These alerts are passed to a plugin script <tt>alert</tt> which can
+easily be adapted to fit your needs. The default script emits
+different beeping sounds for the different messages when the
+<tt>beep</tt> program is available, but it could for example also be
+modified to send a mail on specific issues, connect to monitoring
+software like Nagios, etc. For more details, see the script
+<tt>lib/alert</tt>.
+
+<sect>Other configurable scripts<label id="install_config:configurablescripts">
+<p>
+
+There are a few more places where some configuration of the system can
+be made. These are sometimes needed in non-standard environments.
+<itemize>
+<item> In <tt>bin/dj_make_chroot</tt> on a judgehost some changes to
+       variables can be made, most notably <tt>DEBMIRROR</tt> to
+       select a Debian mirror site near you.
+<item> Optional scripts <tt>submit/submit_copy.sh</tt> and
+       <tt>lib/judge/chroot-startstop.sh</tt> can be modified
+       to suit your local environment. See comments in those files for
+       more information.
+</itemize>
+
+<sect>Submission methods <label id="install_config:submissionmethods">
+<p>
+
+DOMjudge supports two submission methods: via the command line submit
+program and via the web interface. From experience, both methods have
+users that prefer the one above the other.
+
+The command line submit client can send submissions by either using
+the web interface internally (<em>http</em> protocol, the default),
+or using a special command line submit protocol, called
+<em>Dolstra</em>. The latter has some special features but is not
+usually needed. See <ref id="dolstra" name="Submitdaemon and the
+Dolstra protocol"> for
+details on this.
+
+Using the http protocol with the submit client requires the libcURL
+library development files at compile time (the submit client is
+statically linked to libcURL to avoid a runtime dependency).
+
+The database is the authoritative version for submission sources;
+file system storage is available as an easy way
+to access the source files and as backup. The program
+<tt>bin/restore_sources2db</tt> is available to recover the submission
+table in the database from these files. The command line daemon will
+automatically store sources on the file system; the web server needs
+write permissions on <tt>SUBMITDIR</tt> and ignores file system storage
+if these permissions are not set.
+
+<sect>Database installation
+<p>
+
+DOMjudge uses a MySQL database server for information storage.
+
+The database structure and privileges are included in MySQL
+dump files in the sql subdirectory. The default database name is
+<tt>domjudge</tt>. This can be changed manually in the
+<tt>etc/dbpasswords.secret</tt> file: the database name as specified
+for the <tt>jury</tt> user will be used when installing.
+
+Installation of the database is done with <tt>bin/dj-setup-database</tt>.
+For this, you need an installed and configured MySQL server and
+administrator access to it. Run
+<code>
+dj-setup-database [-u <admin_user>] [-p <password>|-r] install
+</code>
+to create the database, users and insert some default/example data
+into the domjudge database. The option <tt>-r</tt> will prompt for a
+password; when no user is specified, the mysql client will try to read
+credentials from <tt>$HOME/.my.cnf</tt> as usual. The command
+<tt>uninstall</tt> can be passed to <tt>dj-setup-database</tt> to
+remove the DOMjudge database and users; <em>this deletes all data!</em>
+
+The domjudge database contains a number of tables, some of which need
+to be manually filled with data before the contest can be run. See the
+<ref id="contestsetup:database" name="database section of Contest
+setup"> for details.
+
+<sect1>Fine tuning settings
+<p>
+
+It may be desirable or even necessary to fine tune some MySQL default settings:
+
+<itemize>
+<item><tt>max_connections</tt>: The default 100 is too low, because of the
+connection caching by Apache threads. 1000 is more appropriate.
+<item><tt>max_allowed_packet</tt>: The default of 16MB might be too
+low when using large testcases. This should be changed both in the
+mysql server and client configuration.
+<item><tt>skip-networking</tt> or <tt>bind-address</tt>: By default MySQL
+only listens on a local socket, but judgehosts need to connect remotely to
+it. When enabling remote connections, you may want to limit it to only the
+IP's of judgehosts in the MySQL user configuration (or with firewall rules).
+<item>Root password: MySQL does not have a password for the root user
+by default. It's very desirable to set one.
+<item>When maximising performance is required, you can
+consider to use the <em>Memory</em> (formerly <em>Heap</em>) table
+for the scoreboard_public and scoreboard_jury tables. They will be
+lost in case of a full crash, but can be recalculated from the jury
+interface.
+</itemize>
+
+<sect1>Setting up replication or backups
+<p>
+The MySQL server is the central place of information storage for
+DOMjudge. Think well about what to do if the MySQL
+host fails or loses your data.
+
+A very robust solution is to set up a replicating MySQL server on
+another host. This will be a hot copy of all data up to the second,
+and can take over immediately in the event of failure. The MySQL manual
+has more information about setting this up.
+
+Alternatively, you can make regular backups of your data to another host,
+for example with <tt>mysqldump</tt>, or use a RAID based system.
+
+Replication can also be used to improve performance, by directing all
+select-queries to one or more replicated slave servers, while updates
+will still be done to the master. This is not supported out of the box,
+and will require making changes to the DOMjudge source.
+
+<sect>Web server configuration
+<p>
+
+For the web interface, you need to have a web server (e.g. Apache)
+installed on the jury system and made sure that PHP correctly works
+with it. Refer to the documentation of your web server and PHP for
+details.
+
+You should turn PHP's <tt>magic_quotes_*</tt> options off. We
+also recommend to turn off <tt>register_globals</tt>.
+If you want to upload large testcases in the jury web interface,
+it may be necessary to raise some PHP limits or you'll get
+"memory exhausted" errors. Make sure that the parameters
+<tt>memory_limit</tt>, <tt>upload_max_filesize</tt> and <tt>post_max_size</tt>
+in <tt>php.ini</tt> are all well above the size of your largest testcase.
+
+To configure the web server for DOMjudge, use the Apache configuration
+snippet from <tt>etc/apache.conf</tt>. It contains examples for
+configuring the DOMjudge pages with an alias directive, or as a
+virtualhost, optionally with SSL; it also contains PHP and security
+settings. The Apache configuration snippet by default includes HTTP
+basic-auth authentication to the jury and plugin interfaces. A default
+user <tt>domjudge_jury</tt> with password equal to that in
+<tt>etc/dbpasswords.secret</tt> is set for the jury interface.
+Additional users can be added with the <tt>htpasswd</tt> program to
+either file <tt>etc/htpasswd-{jury,plugin}</tt>.
+Reload the web server for changes to take effect.
+
+See also section <ref id="security:webprivs" name="Security: webserver
+privileges"> for some details on file permissions for the
+<tt>etc/dbpasswords.secret</tt> and
+<tt>etc/htpasswd-{jury,plugin}</tt> files.
+
+<sect>Logging &amp; debugging
+<p>
+
+All DOMjudge daemons and web interface scripts support logging and
+debugging in a uniform manner via functions in <tt>lib.error.*</tt>.
+There are three ways in which information is logged:
+<itemize>
+<item>Directly to <tt>stderr</tt> for daemons or to the web page for
+      web interface scripts (the latter only on serious issues).
+<item>To a log file set by the variable <tt>LOGFILE</tt>, which is set
+      in each program. Unsetting this variable disables this method.
+<item>To syslog. This can be configured via the <tt>SYSLOG</tt>
+      configuration variable in <tt>etc/common-config.php</tt>. This
+      option gives the flexibility of syslog, such as remote logging.
+      See the syslog(daemon) documentation for more information.
+      Unsetting this variable disables this method.
+</itemize>
+Each script also defines a default threshold level for messages to be
+logged to stderr (<tt>VERBOSE</tt>: defaults to <tt>LOG_INFO</tt> in
+daemons and <tt>LOG_ERROR</tt> in the web interface) and for
+log file/syslog (<tt>LOGLEVEL</tt>: defaults to <tt>LOG_DEBUG</tt>).
+
+In case of problems, it is advisable to check the logs for clues.
+Extra debugging information can be obtained by setting the config
+option <tt>DEBUG</tt> to a bitwise-or of the available
+<tt>DEBUG_*</tt> flags in <tt>etc/common-config.php</tt>, to e.g.
+generate extra SQL query and timing information in the web interface.
+
+<!-- This needs to be cleaned up and possibly merged in other places:
+
+<sect>Building and installing
+<p>
+
+<itemize>
+<item> a password which will be set on the jury web interface.
+<item> the system root password to install some programs set-uid root.
+<item> the MySQL database root password to install the DOMjudge database.
+</itemize>
+It does also automatically generate and set passwords for the team and
+public web interface: these are only used internally in the system and
+are best left untouched.
+
+There are some files/directories that have to be readable/writable by
+the web server. These are:
+<itemize>
+<item> <tt>SYSTEM_ROOT/etc/passwords.php</tt> must be readable by the
+       web server, but (best) not world readable.
+<item> <tt>SUBMITDIR</tt> can optionally be set writable for the
+       web server, to store websubmitted sources there (next to the
+	   database), see <ref id="install_config:submissionmethods"
+	   name="submission methods"> for more information.
+</itemize>
+
+See also section <ref id="security:webprivs" name="Security: webserver
+privileges">.
+-->
+
+<sect>Installation of a judgehost<label id="install_config:judgehost">
+<p>
+
+A few extra steps might need to be taken to completely install and
+configure a judgehost.
+
+For running solution programs under a non-privileged user, a user has
+to be added to the system(s) that act as judgehost. This user does not
+need a home-directory or password, so the following command would
+suffice to add a user `domjudge-run' with minimal privileges.
+
+<!-- NOTE: update this, then also update the copy of this under chapter 2.1 -->
+On RedHat:
+<verb>useradd -d /nonexistent -g nobody -M -n -s /bin/false domjudge-run</verb>
+On Debian:
+<verb>useradd -d /nonexistent -g nogroup -s /bin/false domjudge-run</verb>
+
+For other systems check the specifics of your useradd command.
+This user must also be configured as the user under which programs run
+via <tt>configure --enable-runuser=USER</tt>; the default is
+<tt>domjudge-run</tt>.
+
+When the chroot setting is enabled (default), a static POSIX shell has
+to be available for copying it to the chroot environment. For Linux
+i386, a static Dash shell is included, which works out of the box. For
+other architectures or operating systems, a shell has to be added
+manually. Then simply point the <tt>lib/sh-static</tt> symlink to this
+file.
+
+If you use the default <tt>chroot-startstop.sh</tt> script, then
+the following lines must be added to <tt>/etc/sudoers</tt>:
+<!-- NOTE: update this, then also update the copy of this under chapter 2.1 -->
+<verb>
+domjudge ALL=(root) NOPASSWD: /bin/mount -n -t proc --bind /proc proc
+domjudge ALL=(root) NOPASSWD: /bin/umount /*/proc
+domjudge ALL=(root) NOPASSWD: /bin/mount --bind &lt;chrootdir&gt;/*
+domjudge ALL=(root) NOPASSWD: /bin/umount JUDGEDIR/*
+</verb>
+Here the user <tt>domjudge</tt> must be replaced by the user you
+intend to run the judgedaemon as, <tt>&lt;chrootdir&gt;</tt> by the path
+the chroot environment was installed to and <tt>JUDGEDIR</tt> by the
+value of <tt>judgehost_judgedir</tt> specified by <tt>configure</tt>.
+Note that <tt>&lt;chrootdir&gt;</tt> is different from
+<tt>CHROOTDIR</tt> as specified in <tt>configure</tt>; the first is
+the tree from which bind-mounts are made when Sun Java is used, the
+latter the directory under which judgings are allowed to be executed
+in a chroot environment, and this path is by default set to
+<tt>judgehost_judgedir</tt>.
+
+<sect>Building and installing the submit client
+<p>
+
+The submit client can be built with <tt>make submitclient</tt>. There
+is no make target to install the submit client, as its location will
+very much depend on the environment. You might e.g. want to copy it to
+all team computers or make it available on a network filesystem. Note
+that if the team computers run a different (version of the) operating
+system than the jury systems, then you need to build the submit
+client for that OS.
+
+The submit client needs to know the address of the domserver. This
+can be passed as a command line option or environment variable. The
+latter option makes for easier usage. A sample script
+<tt>submit_wrapper.sh</tt> is included, which sets this variable.
+See that script for more details on how to set this up.
+
+<sect1>The submit client under Windows/Cygwin
+<p>
+
+The submit client can also be built under Windows when the Cygwin
+environment is installed. First the Cygwin <url name="setup.exe"
+url="http://cygwin.com/setup.exe"> program must be downloaded and
+installed with GCC, curl-devel and maybe some more packages included.
+
+<p>
+When Cygwin is correctly installed with all necessary development
+tools, the submit binary can be created by running <tt>configure</tt>
+followed by <tt>make submit.exe</tt> in the <tt>submit</tt> directory.
+
+<sect>(Re)generating documentation and the team manual
+<p>
+
+There are three sets of documentation available under the <tt>doc</tt>
+directory in DOMjudge:
+<descrip>
+<tag>the admin-manual</tag>
+for administrators of the system (this document),
+<tag>the judge-manual</tag>
+for judges, describing the jury web interface and giving some general
+information about this system,
+<tag>the team-manual</tag>
+for teams, explaining how to use the system and what restrictions
+there are.
+</descrip>
+
+<p>
+The team manual is only available in PDF format and must be built from
+the LaTeX sources in <tt>doc/team</tt> after configuration of the
+system. A prebuilt team manual is included, but note that it contains
+default/example values for site-specific configuration settings such
+as the team web interface URL and judging settings such as the memory
+limit. We strongly recommend rebuilding the team manual to include
+site-specific settings and also to revise it to reflect your contest
+specific environment and rules.
+
+<p>
+Besides a standard LaTeX installation, the team manual
+requires the <tt>svn</tt> and <tt>expdlist</tt> packages. These are
+available in TeX Live in the <tt>texlive-latex-extra</tt> package in
+any modern Linux distribution. Alternatively, you can download and
+install them manually from their respective subdirectories in <url
+url="http://mirror.ctan.org/macros/latex/contrib">.
+
+<p>
+When the <tt>docs</tt> part of DOMjudge is installed and site-specific
+configuration set, the team manual can be generated with the command
+<tt>genteammanual</tt> found under <tt>docs/team</tt>. The PDF
+document will be placed in the current
+directory or a directory given as argument. The option <tt>-w WEBBASEURI</tt>
+can be passed to set the base URI of the DOMjudge webinterface; it
+should end with a slash and defaults to <tt>http://example.com/domjudge/</tt>.
+The following should do it on a Debian-like system:
+<code>
+sudo apt-get install make transfig texlive-latex-extra texlive-latex-recommended
+cd .../docs/team
+./genteammanual [-w http://your.location.example.com/domjudge/] [targetdir]
+</code>
+
+<p>
+The team manual is currently available in two languages: English and
+Dutch. We welcome any translations to other languages.
+
+<p>
+The administrator's and judge's manuals are available in PDF and HTML
+format and prebuilt from SGML sources. Rebuilding these is not normally
+necessary. To rebuild them on a Debian-like system, the following commands
+should do it:
+<code>
+sudo apt-get install linuxdoc-tools make transfig texlive-latex-recommended
+make -C doc/admin docs
+make -C doc/judge docs
+</code>
+
+
+<sect>Optional features
+<p>
+
+<sect1>Source code syntax highlighting
+<p>
+
+To support coloured display of submitted source code in the jury
+interface, two external classes of syntax highlighters are supported:
+<url name="GeSHi" url="http://qbnz.com/highlighter"> and the
+<url name="PEAR" url="http://pear.php.net">
+<url name="Text_Highlighter class" url="http://pear.php.net/package/Text_Highlighter/">. DOMjudge tries to find either of those in your PHP include
+path. When none are found, DOMjudge falls back to source code display
+without highlighting.
+
+<sect2>GeSHi
+<p>
+If you run a Debian-like system, you can simply install the 
+<tt>php-geshi</tt> package. If not, download GeSHi and place 
+<tt>geshi.php</tt> and the <tt>geshi/</tt> directory in
+DOMjudge's <tt>LIBWWWDIR</tt>
+(see domserver-static.php for the exact path).
+
+<sect2>PEAR Text Highlighter
+<p>
+You can install the Text Highlighter system wide with the
+PEAR-provided tools, like this: <tt>pear install Text_Highlighter</tt>.
+
+Alternatively you can download the source code from the
+Text_Highlighter website and unpack that under the <tt>LIBWWWDIR</tt>
+directory (see domserver-static.php for the exact path). Rename the
+resulting <tt>Text_Highlighter-x.y.z</tt> directory to just <tt>Text</tt>. 
+
+<sect1>NTP time synchronisation
+<p>
+
+We advise to install an NTP-daemon (Network Time Protocol) to make
+sure the time between jury computer and judgehost (and team computers)
+is in sync.
+
+<sect1>The plugin web interface
+<p>
+
+Next to the public, team and jury web interfaces, DOMjudge also
+provides a <em>plugin</em> web interface. This web interface is still in
+development so subject to change. The interface provides contest data
+from DOMjudge in XML format and is meant to provide external programs
+(plugins) with data on the contest. This allows for all kinds of
+extensions beyond the core functionality of DOMjudge such as providing
+a fancy scoreboard with more statistics, aggregation of scoreboard
+data for a final presentation during the prize ceremony.
+
+As we are still thinking about possible uses and thus the data to be
+provided, the exact specification of this interface may change. Also,
+we are especially interested in feedback and ideas.
+
+There are currently two data-sets provided within the <tt>plugin</tt>
+subdirectory of the DOMjudge web interface, both in XML format:
+<descrip>
+<tag><tt>scoreboard.php</tt></tag>
+	This page provides a representation of the scoreboard.
+	Additionally it includes legend tables for problems,
+	languages, affiliations and team categories. It does not
+	accept any arguments.
+<tag><tt>event.php</tt></tag>
+	This page provides a representation of events that happened
+	during the contest, including submissions, judgings, contest
+	state changes and general clarifications. This page accepts
+	two arguments <tt>fromid</tt> and <tt>toid</tt> to limit the
+	output to events with event ID in that range.
+</descrip>
+See these pages or the accompanying <tt>xsd</tt>-files for the exact
+structure.
+
+<sect>Upgrading
+<p>
+
+There is some support to upgrade DOMjudge to newer versions. Note that
+this functionality is not extensively tested, so when you plan to
+upgrade, <em>you are strongly advised to backup the DOMjudge database
+and other data before continuing</em>. We also advise to check the
+<tt>ChangeLog</tt> file for important changes.
+
+Upgrading the filesystem installation is probably best done by
+installing the new version of DOMjudge in a separate place and
+transferring the configuration settings from the old version.
+
+There are SQL upgrade scripts to transform the database including its
+data to the layout of a newer version. The scripts can be found under
+<tt>sql/upgrade</tt> and each script applies changes between two
+consecutive DOMjudge versions. At the beginning of each script, a check
+is performed which will let MySQL bail out with an error if it should
+not be applied anymore. Note that the scripts must be applied in order
+(sorted by release). These scripts can be applied by running
+<tt>dj-database-setup upgrade</tt>.
+
+
+<chapt>Setting up a contest <label id="contestsetup">
+<p>
+
+After installation is successful, you want to run your contest!
+Configuring DOMjudge to run a contest (or a number of them, in
+sequence) involves the following steps:
+
+<itemize>
+<item> Configure the contest data;
+<item> Set up authentication for teams;
+<item> Supply in- and output testdata;
+<item> Check that everything works.
+</itemize>
+
+<sect>Configure the contest data
+<label id="contestsetup:database">
+<p>
+
+DOMjudge stores and retrieves most of its data from the MySQL
+database. Some information must be filled in beforehand, other tables
+will be populated by DOMjudge.
+
+You can use the jury web interface to add, edit and delete most types
+of data described below. It's advised to keep a version of phpMyAdmin
+handy in case of emergencies, or for general database operations like
+import and export.
+
+This section describes the meaning of each table and what you need to
+put into it. Tables marked with an `x' are the ones you have to
+configure with contest data before running a contest (via the jury web
+interface or e.g. with phpMyAdmin), the other tables are used
+automatically by the software:
+<tabular ca="cll">
+ |clarification    |Clarification requests/replies are stored here.@
+x|configuration    |Runtime configuration settings.@
+x|contest          |Contest definitions with start/end time.@
+ |event            |Log of events during contests.@
+x|judgehost        |Computers (hostnames) that function as judgehosts.@
+ |judging          |Judgings of submissions.@
+ |judging&lowbar;run      |Result of one testcase within a judging.@
+x|language         |Definition of allowed submission languages.@
+x|problem          |Definition of problems (name, corresponding contest, etc.).@
+ |submission       |Submissions of solutions to problems.@
+x|team             |Definition of teams.@
+x|team&lowbar;affiliation |Definition of institutions a team can be affiliated with.@
+x|team&lowbar;category    |Different category groups teams can be put in.@
+ |team&lowbar;unread      |Records which clarifications are read by which team.@
+x|testcase         |Definition of testdata for each problem.@
+ |scoreboard&lowbar;jury  |Cache of the scoreboards for public/teams and for the jury@
+ |scoreboard&lowbar;public|separately, because of possibility of score freezing.
+</tabular>
+
+Now follows a longer description (including fields) per table that has
+to be filled manually. As a general remark: almost all tables have an
+identifier field. Most of these are numeric and automatically
+increasing; these do not need to be specified. The tables
+<tt>language</tt>, <tt>problem</tt>, <tt>team</tt>, and
+<tt>team&lowbar;affiliation</tt> have text strings as identifier
+fields. These need to be manually specified and only alpha-numeric and
+underscore characters are valid, i.e. <tt>a-z, A-Z, 0-9</tt> and
+<tt>&lowbar;</tt>.
+
+<descrip>
+<tag>configuration</tag>
+This table contains configuration settings and is work in progress.
+These entries are simply stored as <tt>name, value</tt> pairs.
+
+<tag>contest</tag>
+The contests that the software will run. E.g. a test session and the
+live contest.
+
+<tt>cid</tt> is the reference ID and <tt>contestname</tt> is a
+descriptive name used in the interface.
+
+<tt>activatetime</tt>, <tt>starttime</tt> and <tt>endtime</tt>
+are required fields and specify when this contest is active and
+open for submissions. Optional <tt>freezetime</tt> and
+<tt>unfreezetime</tt> control scoreboard freezing. For a
+detailed treating of these, see section <ref
+id="contestsetup:milestones" name="Contest milestones">.
+
+The <tt>enabled</tt> field can be unset to allow for easier editing of
+contest times, as disabled contests are not checked to overlap with
+other contests. A disabled contest will also not become active.
+
+<tag>judgehost</tag>
+List here the hosts that will be judging the submissions.
+<tt>hostname</tt> is the (short) hostname of a judge computer.
+<tt>active</tt> indicates whether this host should judge incoming
+submissions. <tt>polltime</tt> is an internally used variable to
+detect whether a judgedaemon is running on the host.
+
+<tag>language</tag>
+Programming languages in which to accept and judge submissions.
+<tt>langid</tt> is a string of maximum length 8, which references the
+language. This reference is also used to call the correct compile
+script (<tt>lib/judge/compile_c.sh</tt>, etc.), so when adding
+a new language, check that these match.
+
+<tt>name</tt> is the displayed name of the language;
+<tt>extension</tt> the internally used filename extension for that language,
+which has to match the first extension as listed in the global
+configuration file.
+
+<tt>allow_submit</tt> determines whether teams can submit
+using this language; <tt>allow_judge</tt> determines whether
+judgehosts will judge submissions for this problem. This can for
+example be set to <em>no</em> to temporarily hold judging when a problem occurs
+with the judging of a specific language; after resolution of the
+problem this can be set to <em>yes</em> again.
+
+<tt>time_factor</tt> is the relative factor by which the timelimit is
+multiplied for solutions in this language. For example Java is/was
+known to be structurally slower than C/C++.
+
+<tag>problem</tag>
+This table contains the problem definitions. <tt>probid</tt> is the
+reference ID, <tt>cid</tt> is the contest ID this problem is (only)
+defined for: a problem cannot be used in multiple contests.
+<tt>name</tt> is the full name (description) of the problem.
+
+<tt>allow_submit</tt> determines whether teams can submit
+solutions for this problem. Non-submittable problems are also not
+displayed on the scoreboard. This can be used to define spare
+problems, which can then be added to the contest quickly;
+<tt>allow_judge</tt> determines whether judgehosts will judge
+submissions for this problem. See also the explanation for language.
+
+<tt>timelimit</tt> is the timelimit in seconds
+within which solutions for this problem have to run (taking into
+account <tt>time_factor</tt> per language).
+
+<tt>special_run</tt> if not empty defines a custom run program
+<tt>run_&lt;special_run&gt;</tt> to run compiled submissions for
+this problem and <tt>special_compare</tt> if not empty defines a
+custom compare program <tt>compare_&lt;special_compare&gt;</tt> to
+compare output for this problem.
+
+The <tt>color</tt> tag can be filled with a CSS colour specification
+to associate with this problem; see also section <ref id="scoreboard:colours"
+name="Scoreboard: colours">.
+
+<tag>team</tag>
+Table of teams: <tt>login</tt> is the account/login-name of the team
+(which is referenced to in other tables as <tt>teamid</tt>) and
+<tt>name</tt> the displayed name of the team. <tt>categoryid</tt> is
+the ID of the category the team is in; <tt>affilid</tt> is the
+affiliation ID of the team.
+
+<tt>authtoken</tt> is a generic field used by several of the supported
+authentication mechanisms to store a piece of information it needs to
+identify the team. The content of the field for each of the mechanisms is:
+<itemize>
+<item>IPADDRESS: field contains the IP address of the team's workstation
+<item>PHP_SESSIONS: contains a hash of the password that the team can log in
+with
+</itemize>
+
+<tt>members</tt> are the names of the team members, separated by
+newlines and <tt>room</tt> is the room the team is located, both for
+display only; <tt>comments</tt> can be filled with arbitrary useful
+information and is only visible to the jury.
+The timestamp <tt>teampage_first_visited</tt> and the <tt>hostname</tt>
+field indicate when/whether/from where a team visited its team web interface.
+
+<tag>team_affiliation</tag>
+<tt>affilid</tt> is the reference ID and <tt>name</tt> the name of the
+institution. <tt>country</tt> should be the 2 character 
+<htmlurl name="ISO 3166-1 alpha-2 abbreviation"
+url="http://www.iso.org/iso/country_codes/iso_3166_code_lists/english_country_names_and_code_elements.htm">
+of the country and <tt>comments</tt> is a free form field
+that is displayed in the jury interface.
+
+Both for the country and the affiliation, a logo can be displayed on
+the scoreboard. For this to work, the <tt>affilid</tt> must match a
+logo picture located in
+<tt>www/images/affiliations/&lt;affilid&gt;.png</tt> and
+<tt>country</tt> must match a (flag) picture in
+<tt>www/images/countries/&lt;country&gt;.png</tt>. All
+country flags are present there, named with their 2-character ISO
+codes. See also <tt>www/images/countries/README</tt>. If
+either file is not present the respective ID string will be printed
+instead.
+
+<tag>team_category</tag>
+<tt>categoryid</tt> is the reference ID and <tt>name</tt> is a string:
+the name of the category. <tt>sortorder</tt> is the order at which
+this group must be sorted in the scoreboard, where a higher number
+sorts lower and equal sort depending on score.
+
+The <tt>color</tt> is again a CSS colour specification used to
+discern different categories easily. See also section <ref
+id="scoreboard:colours" name="Scoreboard: colours">.
+
+The <tt>visible</tt> flag determines whether teams in this category
+are displayed on the public/team scoreboard. This feature can be used
+to remove teams from the public scoreboard by assigning them to a
+separate, invisible category.
+
+<tag>testcase</tag>
+The testcase table contains testdata for each problem;
+<tt>testcaseid</tt> is a unique identifier, <tt>input</tt> and
+<tt>output</tt> contain the testcase input/output and
+<tt>md5sum_input</tt>, <tt>md5sum_output</tt> their respective md5
+hashes to check for up-to-date-ness of cached versions by the
+judgehosts. <tt>probid</tt> is the corresponding problem and
+<tt>rank</tt> determines the order of the testcases for one problem.
+<tt>description</tt> is an optional description for this testcase. See
+also <ref id="contestsetup:testdata" name="providing testdata">.
+
+</descrip>
+
+<sect>Contest milestones<label id="contestsetup:milestones">
+<p>
+
+The <tt>contest</tt> table specifies timestamps for each contest
+that mark specific milestones in the course of the contest.
+
+The triplet <em>activatetime</em>, <em>starttime</em> and <em>endtime</em>
+define when the contest runs and are required fields (activatetime and
+starttime may be equal).
+
+activatetime is the moment when a contest first becomes
+visible to the public and teams (potentially replacing a previous contest
+that was displayed before). Nothing can be submitted yet and the
+problem set is not revealed. Clarifications can be viewed and sent.
+
+At starttime, the scoreboard is displayed and submissions are accepted.
+At endtime the contest stops. New incoming submissions will be stored
+but not processed; unjudged submissions received before endtime will
+still be judged.
+
+<em>freezetime</em> and <em>unfreezetime</em> control scoreboard
+freezing. freezetime is the time after which the public and team
+scoreboard are not updated anymore (frozen). This is meant to make the
+last stages of the contest more thrilling, because no-one knows who has
+won. Leaving them empty disables this feature. When using this feature,
+unfreezetime can be set to automatically `unfreeze' the scoreboard at
+that time. For a more elaborate description, see also section <ref
+id="scoreboard:freeze" name="Scoreboard: freezing and defrosting">.
+
+The scoreboard, results and clarifications will remain to be displayed
+to team and public after a contest, until an activatetime of a later
+contest passes.
+
+All events happen at the first moment of the defined time. That is:
+for a contest with starttime "12:00:00" and endtime "17:00:00", the
+first submission will be accepted at 12:00:00 and the last one at
+16:59:59.
+
+The following ordering must always hold: activatetime &lt;=
+starttime &lt; (freezetime &lt;=) endtime (&lt;= unfreezetime).
+No two contests may have overlap: there's always at most one active
+contest at any time.
+
+
+
+<sect>Team authentication
+<label id="contestsetup:authentication">
+<p>
+
+The authentication system lets domserver know which team it is dealing
+with. This system is modular, allowing flexible addition of new
+methods, if required. The following methods are available by default
+for team authentication.
+
+<sect1>PHP session with passwords (default)
+<p>
+
+Each team receives a password and PHP's session management is used to
+keep track of which team is logged in. This method is easiest to
+setup. It does require the administrator to generate passwords for all
+teams (this can be done in the jury interface) and distribute those,
+though. Also, each team has to login each time they (re)start their
+browser.
+
+<sect1>IP-address based
+<p>
+
+The IP-address of a team's workstation is used as the primary means of
+authentication. The system assumes that someone coming from a specific
+IP is the team with that IP listed in the team table. When a team
+browses to the web interface, this is checked and the appropriate team
+page is presented.
+
+This method has the advantage that teams do not have to login. A
+requirement for this method is that each team computer has a separate
+IP-address from the view of the domserver, though, so this is most
+suitable for onsite contests and might not work with online contests
+if multiple teams are located behind a router, for example.
+Furthermore, with this method the command line submitclient can be
+used next to the web interface submit.
+
+There are three possible ways of configuring team IP-addresses.
+
+<sect2>Supply it beforehand
+<p>
+
+Before the contest starts, when entering teams into the database, add
+the IP that each team will have to that team's entry. When the teams
+arrive, everything will work directly and without further
+configuration (except when teams switch workplaces). If possible, this
+is the recommended modus operandi, because it's the least hassle just
+before and during the contest.
+
+<sect2>Use one-time passwords
+<p>
+
+Supply the teams with a one time password with which to authenticate.
+Beforehand, generate passwords for each team in the jury interface.
+When the test session (or contest) starts and a team connects to the
+web interface and have an unknown IP, they will be prompted for
+username and password. Once supplied, the IP is stored and the
+password is not needed anymore.
+
+This is also a secure option, but requires a bit more hassle from the
+teams, and maybe from the organisers who have to distribute pieces of
+paper.
+
+<em>Note:</em> the web interface will only allow a team to
+authenticate themselves once. If an IP is set, a next authentication
+will be refused (to avoid trouble with lingering passwords). In order
+to fully re-authenticate a team, the IP address needs to be unset. You
+might also want to generate a new password for this specific team.
+Furthermore, a team must explicitly connect to the team interface,
+because with an unknown IP, the root DOMjudge website will redirect to
+the public interface.
+
+<sect2>Set IP upon first submission
+<p>
+
+This is only possible with the
+<ref id="dolstra" name="Dolstra protocol">. The advantage is that no
+prior mapping needs to be configured, but the disadvantage is that
+the team interface cannot be viewed until at least one submission
+was made; there are also more constraints on the system.
+See the section on the Dolstra protocol for details.
+
+<sect1>Fixed team authentication
+<p>
+
+This method automatically authenticates each connection to the team
+web interface as a fixed, configurable team. This can be useful for
+testing or demonstration purposes, but probably not for real use
+scenario's.
+
+<sect1>Adding new authentication methods
+<p>
+
+The authentication system is modular and adding new authentication
+methods is fairly easy. The authentication is handled in the file
+<tt>lib/www/auth.team.php</tt>. Adding a new method amounts to editing
+the functions in that file to handle your specific case.
+
+
+<sect>Providing testdata
+<label id="contestsetup:testdata">
+<p>
+Testdata is used to judge the problems: when a submission run is given the
+input testdata, the resulting output is compared to the reference output data.
+If they match exactly, the problem is judged to be correct.
+For problems with a special compare script, testdata should still be
+provided in the same way, but the correctness depends on the output of the
+custom compare script. Please check the documentation in
+<tt>judge/compare_program.sh</tt> when using this feature.
+
+The database has a separate table named testcase, which can be manipulated
+from the web interface. Under a problem, click on the testcase link. There
+the files can be uploaded. The judgehosts cache a copy based on MD5 sum, so if
+you need to make changes later, re-upload the data in the web interface and
+it will automatically be picked up.
+
+Testdata can also be imported into the system from a zip-bundle on
+each problem webpage. Each pair of files
+<tt>&lt;path-to-file&gt;/&lt;filename&gt;.in</tt> and corresponding
+<tt>*.out</tt> found in the zip-bundle will be added as testdata.
+Furthermore, when the file <tt>domjudge-problem.ini</tt> exists, then
+problem properties are read from that file in INI-syntax. All keys
+from the problem table are supported, so an example contents could be:
+<code>
+probid = hello
+
+name = Hello world!
+allow_submit=false
+color=blue
+</code>
+Testcases will be added to those already present and imported
+properties will overwrite those in the database. A completely new
+problem can also be imported from a zip-bundle on the problems
+overview webpage; in that case, note that if the file
+<tt>domjudge-problem.ini</tt> is not present, a default value is
+chosen for the unmodifiable primary key <tt>probid</tt> (as well as
+for the other keys).
+
+
+<sect>Start the daemons
+<p>
+
+Once everything is configured, you can start the daemons.
+They all run as a normal user on the system. The needed root privileges
+are gained by the setuid-root programs only when required.
+
+<itemize>
+<item> One or more judgedaemons, one on each judgehost;
+<item> Optionally the balloon notification daemon.
+</itemize>
+
+<sect>Check that everything works
+<p>
+
+If the daemons have started without any problems, you've come a long
+way! Now to check that you're ready for a contest.
+
+First, go to the jury interface:
+<tt>http://www.your-domjudge-location/jury</tt>. Look under all the
+menu items to see whether the displayed data looks sane. Use the
+config-checker under `Admin Functions' for some sanity checks on your
+configuration.
+
+Go to a team workstation and see if you can access the team page and
+if you can submit solutions.
+
+Next, it is time to submit some test solutions. If you have the default
+Hello World problem enabled, you can submit some of the example sources
+from under the <tt>doc/examples</tt> directory. They should give `CORRECT'.
+
+You can also try some (or all) of the sources under
+<tt>tests</tt>. Use <tt>make check</tt> to submit a variety of
+tests; this should work when the submit client is available and the
+default example problems are in the active contest. There's also
+<tt>make stress-test</tt>, but be warned that these tests might crash
+a judgedaemon. The results can be checked in the web interface; each
+source file specifies the expected outcome with some explanations. For
+convenience, there is also a script <tt>check-judgings</tt>; this will
+automatically check whether submitted sources from the
+<tt>tests</tt> directory were judged as expected. Note that a
+few sources have multiple possible outcomes: these must be verified
+manually.
+
+When all this worked, you're quite ready for a contest. Or at least,
+the practice session of a contest.
+
+<sect>Testing jury solutions
+<p>
+
+Before running a real contest, you and/or the jury will want to test
+the jury's reference solutions on the system.
+
+There is no special feature for testing their solutions under
+DOMjudge. The simplest approach is to submit these solutions as a
+special team. This method requires a few steps and some carefulness to
+prevent a possible information leak of the problemset. It is assumed
+that you have completely configured the system and contest and that
+all testdata is provided. To submit the jury solutions the following
+steps have to be taken:
+<itemize>
+<item> change the contest time to make the contest currently active;
+<item> setup a special team at a local computer;
+<item> submit the jury solutions as that team;
+<item> check that all solutions are judged as expected in the jury
+       interface;
+<item> revert the contest to the original times.
+</itemize>
+Note that while the contest time is changed to the current time,
+anyone might be able to access the public or team web-interface:
+there's not too much there, but on the scoreboard the number of
+problems and their titles can be read. To prevent this information
+leak, one could disconnect the DOMjudge server, judgehosts and the
+computer used for submitting from the rest of the network.
+
+Furthermore, you should make sure that the team you submit the
+solutions as, is in a category which is set to invisible, so that it
+doesn't show up on the public and team scoreboard. The sample team
+"DOMjudge" could be used, as it is in the "Organisation" category,
+which is not visible by default.
+
+
+<chapt>Team Workstations<label id="teamworkstations">
+<p>
+
+Here's a quick checklist for configuring the team workstations. Of course,
+when hosting many teams, it makes sense to generate a preconfigured account that
+has these features and can be distributed over the workstations.
+
+<enum>
+<item> The central tool teams use to interact with DOMjudge is the web browser.
+  <itemize>
+  <item> If possible, set the Home Page to <tt>your.domjudge.location/team/</tt>
+  <item> Go to the team page and check if this team is correctly identified.
+  <item> If using https and a self signed certificate, add this certificate
+         to the browser certificate list to prevent annoying dialogs.
+  </itemize>
+<item> Make sure compilers for the supported languages are installed and working.
+<item> Provide teams with the command line submit client and check that it works.
+<item> Make the sample in- and output data from the problem set available.
+<item> Add your SSH key to their authorized_keys file, so you can always access
+their account for wiping and emergencies.
+<item> Check that internet access is blocked.
+</enum>
+
+<chapt>Web interface<label id="webinterface">
+<p>
+
+The web interface is the main point of interaction with the system.
+Here you can view submissions coming in, control judging,
+view the standings and edit data.
+
+<sect>Jury and Administrator view
+<p>
+
+The jury interface has two possible views: one for jury members,
+and one for DOMjudge administrators. The second view is the same as
+the jury view, but with more features added. Which to show is decided
+by using the HTTP authentication login used to access the web interface;
+you can list which HTTP users are admin with the variable
+<tt>DOMJUDGE_ADMINS</tt> in <tt>etc/domserver-config.php</tt>.
+
+This separation is handy as a matter of security (jury members cannot
+(accidentally) modify things that shouldn't be) and clarity (jury members
+are not confused / distracted by options they don't need).
+
+Options offered to administrators only:
+<itemize>
+<item>Adding and editing any contest data
+<item>Managing team passwords
+<item>The config checker
+<item>Refreshing the scoreboard & hostname caches
+<item>Rejudge 'correct' submissions
+<item>Restart 'pending' judgings
+</itemize>
+Furthermore, some quick link menu items might differ according to
+usefulness for jury or admins.
+
+<em>A note on rejudging:</em> it is policy within the DOMjudge system
+that a correct solution cannot be reverted to incorrect. Therefore,
+administrator rights are required to rejudge correct or pending
+(hence, possibly correct) submissions. For some more details on
+rejudging, see the jury manual.
+
+
+<sect>The scoreboard <label id="scoreboard">
+<p>
+
+The scoreboard is the canonical overview for anyone interested in the
+contest, be it jury, teams or the general public. It deserves to get a
+section of its own.
+
+<sect1>Colours and sorting <label id="scoreboard:colours">
+<p>
+
+Each problem can be associated with a specific colour, e.g. the colour
+of the corresponding balloon that is handed out. DOMjudge can display
+this colour on the scoreboard, if you fill in the `color' attribute in
+the `problem' table; set it to a <htmlurl name="valid CSS colour value"
+url="http://www.w3.org/TR/REC-CSS1#color-units"> (e.g. `green'
+or `#ff0000', although a name is preferred for displaying colour
+names).
+
+It's possible to have different categories of teams participating,
+this is controlled through the `team_category' table. Each category
+has its own background colour in the scoreboard. This colour can be
+set with the `color' attribute to a valid CSS colour value.
+
+If you wish, you can also define a sortorder in the category table.
+This is the first field that the scoreboard is sorted on. If you want
+regular teams to be sorted first, but after them you want to sort both
+spectator- and business teams equally, you define `0' for the regular
+category and `1' for the other categories. To completely remove a
+category from the public (but not the jury) scoreboard, the category
+visible flag can be set to `0'.
+
+
+<sect1>Starting and ending
+<p>
+
+The displayed scoreboard will always be that of the most recently
+started contest. The scoreboard is never displayed for a contest that
+still has to start. In other words, the scores will become visible on
+the first second of a contest start time.
+
+When the contest ends, the scores will remain to be displayed, until a
+next contest starts.
+
+<sect1>Freezing and defrosting <label id="scoreboard:freeze">
+<p>
+
+DOMjudge has the option to `freeze' the public- and team scoreboards
+at some point during the contest. This means that scores are no longer
+updated and remain to be displayed as they were at the time of the
+freeze. This is often done to keep the last hour interesting for all.
+The scoreboard freeze time can be set with the `freezetime'
+attribute in the contest table.
+
+The scoreboard freezing works by looking at the time a submission is
+made. Therefore it's possible that submissions from (just) before the
+freezetime but judged after it can still cause updates to the public
+scoreboard. A rejudging during the freeze may also cause such updates.
+
+If you do not set any freeze time, this option does nothing. If you
+set it, the public- and team scoreboards will not be updated anymore
+once this time has arrived. The jury will however still see the actual
+scoreboard.
+
+Once the contest is over, the scores are not automatically `unfrozen'.
+This is done to keep them secret until e.g. the prize ceremony. You
+can release the final scores to team- and public interfaces when the
+time is right. You can do this either by setting a predefined
+`unfreezetime' in the contest table, or you push the `unfreeze scores
+now' button in the jury web interface, under contests.
+
+<sect1>Clickability
+<p>
+
+Almost every cell is clickable in the jury interface and gives
+detailed information relevant to that cell. This is (of course) not
+available in the team and public scoreboards, except that in the team
+and public interface the team name cell links to a page with some more
+information and optionally a team picture.
+
+<sect1>Caching
+<p>
+
+The scoreboard is not recalculated on every page load, but rather
+cached in the database. It should be safe for repeated reloads from
+many clients. In exceptional situations (should never occur in normal
+operation, e.g. a bug in DOMjudge), the cache may become inaccurate.
+The jury administrator interface contains an option to recalculate a
+fresh version of the entire scoreboard. You should use this option
+only when actually necessary, since it puts quite a load on the
+database.
+
+<sect1>Exporting to an external website
+<p>
+
+In many cases you might want to create a copy of the scoreboard for
+external viewing from the internet. The command
+<tt>bin/static_scoreboard</tt> is provided just for that. It writes to
+stdout a version of the scoreboard with refresh meta-tags and links to
+team pages removed. This command can for example be run every minute
+and the output be placed as static content on a publicly reachable
+webserver.
+
+<sect>Balloons
+<p>
+
+In many contests balloons are handed out to teams that solve a
+particular problem. DOMjudge can help in this process: both a web
+interface and a notification daemon are available to notify that a new
+balloon needs to be handed out. Note that only one should be used at a
+time.
+
+The web based tool is reachable from the main page in the jury
+interface, where each balloon has to be checked off by the person
+handing it out.
+
+For the daemon, set the BALLOON_CMD in <tt>bin/balloons</tt> to define
+how notifications
+are sent. Examples are to mail to a specific mailbox or to send
+prints to a printer. When configured, start <tt>bin/balloons</tt>
+and notification will start.
+
+Notifications will continue even after the scoreboard is frozen,
+although a warning is printed on the notification. Stop the balloons
+daemon when you don't want balloons to be handed out anymore.
+
+
+<chapt>Security <label id="security">
+<p>
+
+This judging system was developed with security as one of the main
+goals in mind. To implement this rigorously in various aspects
+(restricting team access to others and the internet, restricting
+access to the submitted programs on the jury computers, etc...)
+requires root privileges to different parts of the whole contest
+environment. Also, security measures might depend on the environment.
+Therefore we have decided not to implement security measures which are
+not directly related to the judging system itself. We do have some
+suggestions on how you can setup external security.
+
+<sect>Considerations
+<p>
+
+Security considerations for a programming contest are a bit different
+from those in normal conditions: normally users only have to be
+protected from deliberately harming each other. During a contest we
+also have to restrict users from cooperatively communicating,
+accessing restricted resources (like the internet) and restrict user
+programs running on jury computers.
+
+We expect that chances are small that people are trying to cheat
+during a programming contest: you have to hack the system and make use
+of that within very limited time. And you have to not get caught and
+disqualified afterwards. Therefore passive security measures of
+warning people of the consequences and only check (or probe) things
+will probably be enough.
+
+However we wanted the system to be as secure as possible within
+reason. Furthermore this software is open source, so users can try to
+find weak spots before the contest.
+
+<sect>Internal security <label id="security:internal">
+<p>
+
+Internal security of the system relies on users not being able to get
+to any vital data (jury input/output and users' solutions). Data is
+stored in two places: files on the jury account and in the SQL
+database. Files should be protected by preventing permission to the
+relevant directories. Furthermore, the (jury) web interface offers a
+view and allows modification of a lot of sensitive data.
+
+Database access is protected by passwords. The default permissions
+allow connections from <em>all</em> hosts, so make sure you restrict
+this appropriately or choose strong enough passwords.
+
+<em>Note:</em> database passwords are stored in
+<tt>etc/dbpasswords.secret</tt>. This file has to be
+non-readable to teams, but has to be readable to the web server to let
+the jury web interface work. A solution is to make it readable to a
+special group the web server runs as. This is done when using the
+default configuration and installation method and when <tt>make
+install-{domserver,judgehost}</tt> is run as root. The webserver group
+can be set with <tt>configure --with-webserver-group=GROUP</tt> which
+defaults to <tt>www-data</tt>.
+
+The jury web interface is protected by HTTP Authentication. These
+credentials are essentially sent plain-text, so we advise to setup
+HTTPS at least for the jury interface, but preferably for all web
+interfaces. By default
+the <tt>domjudge_jury</tt> user will be given full access. You can
+choose to add more users to the file <tt>etc/htpasswd-jury</tt>. In
+<tt>etc/domserver-config.php</tt> you can add these users to the list
+<tt>DOMJUDGE_ADMINS</tt>. Most data-modification functions are
+restricted to only users in this list. See also the judge manual for
+some more details.
+
+Secondly, the submitted sources should not be interceptable by other
+teams (even though that, if these would be sent clear-text, a team
+would normally need to be root/administrator on their computer to
+intercept this). This can be accomplished by using HTTPS for the web
+interface. The <ref id="dolstra" name="Dolstra submission method"> by
+default uses SSH to send files over the network.
+
+There are multiple authentication methods for teams, each having its
+own issues to check for.
+
+When using IP address authentication, one has to be careful that teams
+are not able to spoof their IP (for which they normally need
+root/administrator privileges), as they would then be able to view
+other teams' submission info (not their code) and clarifications and
+submit as that team.
+<em>Note:</em> This means that care has to be taken e.g. that teams
+cannot simply login onto one another's computer and spoof their identity.
+
+When using PHP sessions, authentication data is sent via HTTP, so we
+strongly advise to use HTTPS in that case.
+
+
+<sect>Root privileges <label id="security:rootprivs">
+<p>
+
+A difficult issue is the securing of submitted programs run by the
+jury. We do not have any control over these sources and do not want to
+rely on checking them manually or filtering on things like system
+calls (which can be obscured and are different per language).
+
+Therefore we decided to tackle this issue by running these programs in
+a environment as restrictive as possible. This is done by setting up a
+minimal chroot environment. For this, root privileges on the judging
+computers and statically compiled programs are needed. By also
+limiting all kinds of system resources (memory, processes, time,
+unprivileged user) we protect the system from programs which try to
+hack or could crash the system.  However, a chroot environment does
+not restrict network access, so there lies a possible security risk
+that has to be handled separately.
+
+<sect>File system privileges <label id="security:fileprivs">
+<p>
+
+Of course you must make sure that the file system privileges are set
+such that there's no unauthorised access to sensitive data, like
+submitted solutions or passwords. This is quite system dependent. At
+least <tt>JUDGEDIR</tt> should not be readable by other users
+than DOMjudge.
+
+<sect1>Permissions for the web server <label id="security:webprivs">
+<p>
+
+<!--
+FIXME: check that permissions are set as laid out here, and modify
+this text to say that these things are set correctly by default.
+-->
+Make sure that the web server serving the DOMjudge web interface pages
+has correct permissions to the <tt>www, lib, etc</tt>
+directory trees. The <tt>www</tt> and <tt>lib</tt> trees can safely
+set to be readable and accessible. Care should be taken with the
+<tt>etc</tt> dir: the <tt>domserver-{config,static}.php</tt>,
+<tt>htpasswd-*</tt> and <tt>dbpasswords.secret</tt> files
+should all be readable, but <tt>dbpasswords.secret</tt> and the
+htpasswd files should not be
+readable by anyone else. This can be done for example by setting the
+<tt>etc</tt> directory to owner:group &lt;DOMjudge
+account&gt;:&lt;Web server group&gt; and permissions
+<tt>drwxr-x---</tt>, denying users other than yourself and the
+web server group access to the configuration and password files.
+
+If you want the web server to also store incoming submission sources on
+the file system (next to the database), then <tt>SUBMITDIR</tt> must be
+writable for the web server, see also <ref
+id="install_config:submissionmethods" name="submission methods">.
+
+You should take care not to serve any files over the web that
+are not under the DOMjudge 'www/' directory, because they might
+contain sensitive data (e.g. those under <tt>etc/</tt>). DOMjudge
+comes with <tt>.htaccess</tt> files that try to prevent this, but
+double-check that it's not accessible.
+
+<sect>External security <label id="security:external">
+<p>
+
+The following security issues are <em>not</em> handled by DOMjudge,
+but left to the administrator to set up.
+
+Network traffic between team- and jury-computers and the internet
+should be limited to what is allowed. Possible ways of enforcing this
+might be: monitor traffic, modify firewall rules on team computers or
+(what we implemented with great satisfaction) put all team computers
+behind a firewalling router.
+
+Solutions are run within a restricted (chroot) environment on the
+judge computers. This however does not restrict network access, so a
+team could try to send in a solution that tries to send input testdata
+back to them, access the internet, etc... A solution to this problem
+is to disallow all network traffic for the test user on the judge
+computers. On Linux, this can be accomplished by modifying the
+iptables, adding a rule like:
+
+<verb>
+iptables -I OUTPUT -o &lt;network_interface&gt; -m owner --uid-owner &lt;testuser_uid&gt; -j REJECT
+</verb>
+
+
+<appendix>
+
+<chapt>Common problems and their solutions <label id="problems">
+<p>
+
+
+<sect>Java compilers and the chroot <label id="problems:java-chroot">
+<p>
+
+Java is difficult to deal with in an automatic way. It is probably
+most preferable to use Sun Java, because that's the version
+contestants will be used to. The GNU Compiler for Java (GCJ) is easier
+to deal with but may lack some features.
+
+With the default configuration, submitted programs are run within a minimal
+chroot environment. For this the programs have to be statically
+linked, because they do not have access to shared libraries.
+
+For most languages compilers support this, but for Java, this is a bit
+problematic. The Sun Java compiler `javac' is not a real compiler:
+a bytecode interpreter `java' is needed to run the binaries and thus
+this cannot simply run in a chroot environment.
+
+There are some options to support Java as a language:
+<enum>
+<item> One can disable the chroot environment in
+       <tt>etc/judgehost-config.php</tt> by disabling <tt>USE_CHROOT</tt>.
+       Disabling the chroot environment removes this extra layer of
+       security against submissions that attempt to
+       cheat, but it is a simple solution to getting Java to work.
+<item> Next, one can build a bigger chroot environment which contains
+       all necessary ingredients to let Sun Java work within it.
+       DOMjudge supports this with some manual setup.
+
+       First of all, a chroot tree with Java support must be created.
+       The script <tt>bin/dj_make_chroot</tt> creates one from Debian GNU/Linux
+       sources; run that script without arguments for basic usage
+       information. Next, edit the script <tt>lib/judge/chroot-startstop.sh</tt>
+       and adapt it to work with your local system and uncomment the
+       script in <tt>etc/judgehost-config.php</tt>.
+<item> As an alternative the <tt>gcj</tt> compiler from GNU can be
+       used instead of Sun's version. This one generates true machine
+       code and can link statically. However a few function calls
+       cannot be linked statically (see `GCJ compiler warnings' in
+       this FAQ). Secondly, the static library <tt>libgcj.a</tt>
+       doesn't seem to be included in all GNU/Linux distributions: at
+       least not in RedHat Enterprise Linux 4.
+</enum>
+
+<sect>The Sun Java virtual machine (jvm) and memory limits
+<p>
+
+DOMjudge imposes memory limits on submitted solutions. These limits
+are imposed before the compiled submissions are started. On the other
+hand, the Sun jvm is started via a compile-time generated script which
+is run as a wrapper around the program. This means that the memory
+limits imposed by DOMjudge are for the jvm and the running program
+within it. As the jvm uses approximately 300MB, this reduces the limit
+by this significant amount. See <tt>judge/compile_java_javac.sh</tt>
+for the implementation details.
+
+If you see error messages of the form
+<code>
+Error occurred during initialization of VM
+java.lang.OutOfMemoryError: unable to create new native thread
+</code>
+or
+<code>
+Error occurred during initialization of VM
+Could not reserve enough space for object heap
+</code>
+Then the problem is probably that the jvm needs more memory than what
+is reserved by the Java compile script. You should try to increase the
+<tt>MEMRESERVED</tt> variable in <tt>judge/compile_java.sh</tt> and
+check that the total memory limit <tt>MEMLIMIT</tt> in
+<tt>etc/judgehost-config.php</tt> is larger than <tt>MEMRESERVED</tt>.
+
+<sect>Java class naming
+<p>
+
+Java requires a specific naming of the main class. When declaring the
+main class <tt>public</tt>, the filename must match the class name.
+Therefore one should <em>not</em> declare the main class public; from
+experience however, many teams do so. Secondly, the Java compiler
+generates a bytecode file depending on the class name. There are two
+ways to handle this.
+
+The simplest Java compile script <tt>compile_java_javac.sh</tt>
+requires the main class to be named <tt>Main</tt> with method
+<code>
+public static void main(String args[])
+</code>
+
+The alternative (and default) is to use the script
+<tt>compile_java_javac_detect.sh</tt>, which automatically detects the
+main class and even corrects the source filename when it is declared
+public.
+
+When using the GNU gcj compiler, the same holds and two similar
+scripts <tt>compile_java_gcj.sh</tt> and
+<tt>compile_java_gcj_detect.sh</tt> are available.
+
+<sect>GCJ compiler warnings
+<p>
+
+When using the GNU GCJ compiler for compiling Java sources, it can
+give a whole lot of warning messages of the form
+<verb>
+/usr/lib/gcc-lib/i386-linux/3.2.3/libgcj.a(gc_dlopen.o)(.text+0xbc):
+In function `GC_dlopen': Using 'dlopen' in statically linked
+applications requires at runtime the shared libraries from the glibc
+version used for linking
+</verb>
+
+These are generated because you are trying to compile statically
+linked sources, but some functions can not be static, e.g. the
+`dlopen' function above. These are <em>warnings</em> and can be safely
+ignored, because under normal programming contest conditions people
+are not allowed to use these functions anyway (and they are not
+accessible within the chroot-ed environment the program is run in).
+
+To filter these warnings, take a look at
+<tt>judge/compile_java_gcjmod.sh</tt> and replace or symlink
+<tt>judge/compile_java.sh</tt> by/to this file.
+
+<sect>Error: `submit_copy.sh failed with exitcode XX'
+<p>
+
+This error can have various causes. First of all: check the
+<tt>submit.log</tt> file for more complete error messages.
+
+Assuming the default configuration where submit_copy.sh uses `scp', we
+have found that shell initialisation scripts might contain statements
+which generate errors: scp runs the user's default shell when copying
+submission files and when the shell dies (e.g. because of not having a
+terminal), the copying fails.
+
+Another cause might be that you do not have automatic access to the
+team's account (e.g. using ssh keys).
+
+<sect>C#/mono support
+<p>
+
+Using the mono compiler and runtime for C# gives rise to similar
+problems as with Java. Although the C# language has been added to
+DOMjudge, there's no support yet to run it within a chroot
+environment. So in that case, <tt>USE_CHROOT</tt> must be disabled.
+
+<sect>Memory limit errors in the web interface
+<p>
+
+E.g. when uploading large testdata files, one can run into an error in
+the jury web interface of the form:
+<verb>
+*Fatal error*: Allowed memory size of XX bytes exhausted (tried to
+allocate YY bytes) in */home/domjudge/system/lib/lib.database.php*
+on line *154*
+</verb>
+This means that the PHP engine has run out of memory. The solution is
+to raise the memory limits for PHP. This can be done by either editing
+<tt>etc/apache.conf</tt> and raising the <tt>memory_limit</tt>,
+<tt>upload_max_filesize</tt> and <tt>post_max_size</tt> values under
+the jury directory or by directly editing the global Apache or
+<tt>php.ini</tt> configuration.
+
+<sect>Compiler errors: `runguard: root privileges not dropped'
+<label id="runguard-rootprivs">
+<p>
+
+<verb>
+Compiling failed with exitcode 255, compiler output:
+/home/domjudge/system/bin/runguard: root privileges not dropped
+</verb>
+When the above error occurs on submitting any source, this indicates
+that you are running the <tt>judgedaemon</tt> as root user. You should
+not run any part of DOMjudge as root. Either run it as yourself or
+e.g. create a user <tt>domjudge</tt> under which to install and run
+everything. Also do not confuse this with the <tt>domjudge-run</tt>
+user: this is a special user to run submissions as and should also not
+be used to run normal DOMjudge processes; this user is only for
+internal use.
+
+
+<chapt>Multi-site contests <label id="multisite">
+<p>
+
+This manual assumed you are running a singe-site contest; that is, the teams
+are located closely together, probably in a single physical location. In a
+multi-site or distributed contest, teams from several remote locations use the
+same DOMjudge installation. An example is a national contest where teams can
+participate at their local institution.
+
+DOMjudge supports such a setup on the condition that a central installation of
+DOMjudge is used to which the teams connect over the internet. It is here where
+all submission processing and judging takes place. Because DOMjudge uses a web
+interface for all interactions, teams and judges will interface with the system
+just as if it were local.  Still, there are some specific considerations for a
+multi-site contest.
+
+Network: there must be a relatively reliable network connection between the
+locations and the central DOMjudge installation, because teams cannot submit or
+query the scoreboard if the network is down. Because of travelling an unsecured
+network, you may want to consider HTTPS for encrypting the traffic.  If you
+want to limit internet access, it must be done in such a way that the remote
+DOMjudge installation can still be reached.
+
+Team authentication: the IP-based authentication will still work as long as
+each team workstation has a different public IP address. If some teams are
+behind a NAT-router and thus all present themselves to DOMjudge with the same
+IP-address, the PHP sessions authentication scheme needs to be used.
+
+Judges: if the people reviewing the submissions will be located remotely as
+well, it's important to agree beforehand on who-does-what, using the
+submissions claim feature and how responding to incoming clarification requests
+is handled. Having a shared chat/IM channel may help when unexpected issues
+arise.
+
+Scoreboard: by default DOMjudge presents all teams in the same scoreboard.
+Per-site rankings are not currently possible. <!-- FIXME -->
+
+
+<chapt>DOMjudge and the ICPC validator interface standard <label id="validator">
+<p>
+DOMjudge supports the ICPC validator interface standard, which can be
+found at: <url url="http://www.ecs.csus.edu/pc2/doc/valistandard.html">
+
+The invocation code (<tt>judge/testcase_run.h</tt>) adheres to the
+invocation interface. It passes as a 5th optional parameter to the
+validator program the filename in which it expects a difference output
+between the program and jury output (parameters 2 and 3 respectively).
+
+Parsing of the result XML file (in the result interface) is done with
+the `xsltproc' program, which is part of the
+<url name="GNOME libxslt package" url="http://www.xmlsoft.org/XSLT/">.
+<em>The exitcode of the validator program should be zero, otherwise
+an internal error is generated.</em>
+
+DOMjudge currently has two validator scripts: <tt>judge/compare</tt>
+and <tt>judge/compare_program.sh</tt>. The first does a compare with a
+plain diff, the second script calls an external program for checking
+(e.g. <tt>judge/check_float</tt> for comparison of floating point
+results). When passed a 5th parameter, this is interpreted as a
+filename to which these scripts will write a comparison of the program
+and jury output. Both scripts also generate XML compliant output,
+which is written to the result file specified in parameter 4 and fully
+complies with the validator standard.
+
+<chapt>Submitdaemon and the Dolstra protocol <label id="dolstra">
+<p>
+
+In the default situation, teams can submit their solutions either
+via browsing to the web interface, or by using the command line
+submit client, which behind the scenes employs the same web
+interface to actually make the submission. This setup suffices for
+many environments.
+
+The Dolstra protocol is different in that it uses a submitdaemon
+running on the domserver. One advantage is that submissions can be
+made before the IP address of the team is known.
+This authentication is fortified by
+the following process. When a client connects, it does not send the
+submission file, but only a reference to a randomised and not publicly
+visible file. This file is then copied from server side with the
+submit_copy script. This makes it impossible for teams to spoof a
+submission for a different team: the server `calls back' the team the
+submitter identified himself as and checks for existence of the
+advertised file. Because filenames are randomised and invisible
+(within the <tt>$HOME/.domjudge</tt> directory by default), it is also
+impossible for someone to guess another team's filename and submit it
+for them.
+
+The figure below is a graphical representation of the flow of a
+submission. Arrows with filled lines indicate the flow of the
+submission file, while dot-dash lines indicate flow of metadata about
+the submission. Each line where no protocol of data transfer is given,
+are just file system operations. Squares are programs and rounded
+squares are storage locations.
+
+<figure loc="h">
+<eps file="submitflow.eps">
+<img src="submitflow.png">
+<caption>Submission flow diagram including Dolstra protocol.
+</figure>
+
+
+To have DOMjudge configure the IP upon first submission in this way,
+set option <tt>STRICTIPCHECK</tt> to 0. In that case, we start out without
+IP's (and the web interface will not be accessible), but as soon as a
+team connects with the command line submit client <em>to the
+submitdaemon</em>, they are authenticated by correctly submitting a
+file and the IP is registered and everything works as normal.
+
+The connect can happen during the test session, so during the real
+contest everything is fully available. This is a secure way of
+authenticating teams, which requires no passwords or IP configuration,
+but teams must submit via the command line submit client to the
+command line daemon before they can access their teampage.
+
+<sect>Dolstra protocol requirements
+<p>
+
+If you want to use the Dolstra submit method (next to / instead of
+the HTTP functionality) you need to satisfy the following requirements.
+
+The submitdaemon needs to run at the domserver, and receive connections
+on a configurable TCP port, default 9147.
+
+Team accounts need to be
+accessible via SSH on the jury computers (a SSH public key
+of the jury account should be installed on all team accounts to
+provide key-based access), and a shared filesystem (e.g. NFS)
+is needed between the team computers and the domserver.
+Alternatively, another means of
+providing access from the server can be configured, see the file
+<tt>submit/submit_copy.sh</tt> for more details.
+
+To build the command line client under Windows, you need to have at least Windows XP and
+cygwin version 1.7 for support of the complete <tt>netdb.h</tt>
+headers.
+
+
+</report>

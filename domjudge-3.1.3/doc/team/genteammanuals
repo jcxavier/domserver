@@ -1,0 +1,69 @@
+#!/bin/sh
+# $Id: genteammanuals 3302 2010-08-09 18:39:20Z eldering $
+#
+# Script to generate team manual including actual configuration
+# settings. Also allows one to pass a WEBBASEURI setting with the
+# option '-w'.
+#
+# Part of the DOMjudge Programming Contest Jury System and licenced
+# under the GNU GPL. See README and COPYING for details.
+
+set -e
+
+SOURCES="team-manual.tex team-manual-NL.tex"
+PREAMBLE=team-manual-preamble.tex
+
+NRUNS=3
+
+# Default value for base URL of the DOMjudge webinterface:
+WEBBASEURI='http://example.com/domjudge/'
+if [ "x$1" = 'x-w' ]; then
+	WEBBASEURI=$2
+	shift 2
+fi
+
+OUTPUTDIR=.
+[ -n "$1" ] && OUTPUTDIR="$1"
+
+if [ ! -f "$PREAMBLE" ]; then
+	echo "File '$PREAMBLE' not found; are you running"
+	echo "this script from the team manual directory?"
+	exit 1
+fi
+
+if [ ! -d "$OUTPUTDIR" -o ! -w "$OUTPUTDIR" ]; then
+	echo "Output directory '$OUTPUTDIR' not found or not writable."
+	exit 1
+fi
+
+# Set LaTeX command and flags if not given:
+[ -z "$LATEX" ] && LATEX=pdflatex
+[ -z "$LATEXFLAGS" ] && LATEXFLAGS='--interaction=errorstopmode'
+
+TEXCONFIG=`mktemp /tmp/domjudge-texconfig.XXXXXX`
+
+if [ -x "gentexconfig" ]; then
+	./gentexconfig    "$WEBBASEURI" > "$TEXCONFIG"
+else
+	./gentexconfig.in "$WEBBASEURI" > "$TEXCONFIG"
+fi
+
+# Run LaTeX:
+for f in $SOURCES ; do
+	[ "$QUIET" ] || printf "Running $NRUNS passes of '$LATEX $LATEXFLAGS $f'..."
+	run=1
+	while [ $run -le $NRUNS ]; do
+		( cat "$TEXCONFIG" ; echo \\"input{$f}" ) | \
+			$LATEX $LATEXFLAGS -jobname ${f%.tex} -output-directory "$OUTPUTDIR" >/dev/null
+		if [ $? -ne 0 ]; then
+			printf "\nTeX-ing failed in run $run, see '${f%tex}log' for details.\n"
+			exit 1
+		else
+			[ "$QUIET" ] || printf " $run"
+		fi
+		run=$(($run+1))
+	done
+	[ "$QUIET" ] || printf "\n" ;
+done
+
+rm -f "$TEXCONFIG"
