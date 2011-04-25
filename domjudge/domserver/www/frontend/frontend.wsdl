@@ -46,6 +46,19 @@
       <part name="Result" type="xsd:int"/>
     </message>
 
+    <!--####################### addNewAssessmentSpecial ########################-->
+
+    <message name="addNewAssessmentSpecialRequest">
+      <part name="id" type="xsd:int"/>
+      <part name="name" type="xsd:string"/>
+      <part name="timeLimit" type="xsd:int"/>
+	  <part name="special" type="xsd:string"/>
+    </message>
+
+    <message name="addNewAssessmentSpecialResponse">
+      <part name="Result" type="xsd:int"/>
+    </message>
+
     <!--####################### removeAssessment ########################-->
 
     <message name="removeAssessmentRequest">
@@ -60,6 +73,16 @@
       <part name="name" type="xsd:string"/>
       <part name="timeLimit" type="xsd:int"/>
       <part name="nTestCases" type="xsd:int"/>
+    </message>
+
+	<!--####################### updateAssessmentSpecial ########################-->
+
+    <message name="updateAssessmentSpecialRequest">
+      <part name="id" type="xsd:int"/>
+      <part name="name" type="xsd:string"/>
+      <part name="timeLimit" type="xsd:int"/>
+      <part name="nTestCases" type="xsd:int"/>
+	  <part name="special" type="xsd:string"/>
     </message>
 
     <!--####################### addTestCase ########################-->
@@ -164,12 +187,21 @@
         <output message="addNewAssessmentResponse"/>
       </operation>
 
+	  <operation name="addNewAssessmentSpecial">
+	    <input message="addNewAssessmentSpecialRequest"/>
+	    <output message="addNewAssessmentSpecialResponse"/>
+	  </operation>
+
        <operation name="removeAssessment">
          <input message="removeAssessmentRequest"/>
        </operation>
 
        <operation name="updateAssessment">
          <input message="updateAssessmentRequest"/>
+       </operation>
+
+	   <operation name="updateAssessmentSpecial">
+         <input message="updateAssessmentSpecialRequest"/>
        </operation>
 
        <operation name="addTestCase">
@@ -238,12 +270,23 @@
         <output> <soap:body use="literal"/> </output>
       </operation>
 
+	  <operation name='addNewAssessmentSpecial'>
+        <soap:operation soapAction="http://domserver.fe.up.pt/domjudge/frontend"/>
+        <input> <soap:body use="literal"/> </input>
+        <output> <soap:body use="literal"/> </output>
+      </operation>
+
       <operation name='removeAssessment'>
         <soap:operation soapAction="http://domserver.fe.up.pt/domjudge/frontend"/>
         <input> <soap:body use="literal"/> </input>
       </operation>
 
       <operation name='updateAssessment'>
+        <soap:operation soapAction="http://domserver.fe.up.pt/domjudge/frontend"/>
+        <input> <soap:body use="literal"/> </input>
+      </operation>
+
+	  <operation name='updateAssessmentSpecial'>
         <soap:operation soapAction="http://domserver.fe.up.pt/domjudge/frontend"/>
         <input> <soap:body use="literal"/> </input>
       </operation>

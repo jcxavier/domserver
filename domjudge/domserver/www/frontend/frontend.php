@@ -90,7 +90,7 @@ class ProgrammingAssessmentService {
         return $languageinfo;
     }
 
-    function addNewAssessment($id, $name, $timeLimit) {
+    function addNewAssessment($id, $name, $timeLimit, $special = NULL) {
 
         $conn = $this->connect_to_db();
 
@@ -122,11 +122,26 @@ class ProgrammingAssessmentService {
         }
 
         $cid = (int) $row{'cid'};
-        $columns = "(probid, cid, name, allow_submit, allow_judge, timelimit)";
-        $values = "(\"$id\", $cid, \"$name\", 1, 1, $timeLimit)";
-        $query = "INSERT INTO problem $columns values $values";
+        $columns = "(`probid`, `cid`, `name`, `allow_submit`, `allow_judge`, `timelimit`, `special_run`, `special_compare`, `color`)";
+        
+        
+        if ($special === NULL) {            
+            $values = "(\"$id\", " . $cid . ", \"$name\", 1, 1, " . $timeLimit . ", NULL, NULL, NULL)";
+        }
+        else { 
+            $values = "(\"$id\", " . $cid . ", \"$name\", 1, 1, " . $timeLimit .
+            ", \"$special\", \"$special\", NULL)";
+        }
+        
+        $query = "INSERT INTO `problem` " . $columns . " VALUES " . $values . ";";
+                
         mysql_query($query);
 
+        return $id;
+    }
+    
+    function addNewAssessmentSpecial($id, $name, $timeLimit, $special) {
+        $id = $this->addNewAssessment($id, $name, $timeLimit, $special);
         return $id;
     }
 
@@ -145,29 +160,44 @@ class ProgrammingAssessmentService {
         mysql_query($query);
     }
 
-    function updateAssessment($id, $name, $timeLimit, $nTestCases) {
+    function updateAssessment($id, $name, $timeLimit, $nTestCases, $special = NULL) {
         $conn = $this->connect_to_db();
 
         if (! $conn) {
             return;
         }
 
-        $query = "UPDATE problem SET name=\"$name\", timelimit=$timeLimit,
-                  WHERE probid=\"$id\"";
+        if ($special === NULL) {
+            $query = "UPDATE `problem` SET `name`= \"$name\", `timelimit` = " . $timeLimit .
+            ", `special_compare` = NULL, `special_run` = NULL WHERE `probid` = \"$id\";";
+        }
+        else {
+            $query = "UPDATE `problem` SET `name`= \"$name\", `timelimit` = " . $timeLimit .
+            ", `special_compare` = \"$special\", `special_run` = \"$special\" WHERE `probid` = \"$id\";";
+        }
 
         mysql_query($query);
+
 
         //also update the problems that are copies of the original problem
         for ($i = 0; $i < $nTestCases; $i++) {
             $newid = "$id" . "_$i";
 
-            $query = "UPDATE problem SET name=\"$name\", timelimit=$timeLimit,
-                  WHERE probid=\"$newid\"";
+            if ($special === NULL) {  
+                $query = "UPDATE `problem` SET `name`= \"$name\", `timelimit` = " . $timeLimit .
+                ", `special_compare` = NULL, `special_run` = NULL WHERE `probid` = \"$newid\";";
+            }
+            else {
+                $query = "UPDATE `problem` SET `name`= \"$name\", `timelimit` = " . $timeLimit .
+                ", `special_compare` = \"$special\", `special_run` = \"$special\" WHERE `probid` = \"$newid\";";
+            }
 
             mysql_query($query);
         }
-
-        
+    }
+    
+    function updateAssessmentSpecial($id, $name, $timeLimit, $nTestCases, $special) {
+        $this->updateAssessment($id, $name, $timeLimit, $nTestCases, $special);
     }
 
     private function addAssessmentCopy($probid, $testCaseId) {
@@ -187,9 +217,19 @@ class ProgrammingAssessmentService {
         $name = $row{'name'};
         $allow_judge = $row{'allow_judge'};
         $timeLimit = $row{'timelimit'};
+        $special = $row{'special_run'};
 
-        $columns = "(probid, cid, name, allow_submit, allow_judge, timelimit)";
-        $values = "(\"$id\", $cid, \"$name\", 1, $allow_judge, $timeLimit)";
+        if ($special === NULL)
+        {
+            $columns = "(probid, cid, name, allow_submit, allow_judge, timelimit)";
+            $values = "(\"$id\", $cid, \"$name\", 1, $allow_judge, $timeLimit)";
+        }
+        else
+        {
+            $columns = "(probid, cid, name, allow_submit, allow_judge, timelimit, special_run, special_compare)";
+            $values = "(\"$id\", $cid, \"$name\", 1, $allow_judge, $timeLimit, \"$special\", \"$special\")";
+        }
+       
         $query = "INSERT INTO problem $columns values $values";
         mysql_query($query);
     }
