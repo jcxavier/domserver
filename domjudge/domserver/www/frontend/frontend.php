@@ -436,10 +436,15 @@ class ProgrammingAssessmentService {
         $row = mysql_fetch_array($result);
 
         if ($row) {
-            array_push($subresult, $row{'result'}, $row{'output_compile'}, $row{'output_run'}, $row{'output_diff'}, $row{'output_error'});
+            array_push($subresult, $this->convert($row{'result'}), $this->convert($row{'output_compile'}),
+            $this->convert($row{'output_run'}), $this->convert($row{'output_diff'}), $this->convert($row{'output_error'}));
         }
 
         return $subresult;
+    }
+    
+    private function convert($s) {
+        return utf8_encode($s);
     }
 }
 
