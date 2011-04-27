@@ -143,6 +143,20 @@
       <part name="ids" type="xsd:Array"/>
     </message>
 
+	<!--####################### addCompileSubmissionSpecial ########################-->
+
+    <message name="addCompileSubmissionSpecialRequest">
+      <part name="participantLogin" type="xsd:string"/>
+      <part name="assessmentId" type="xsd:int"/>
+      <part name="testCasesIds" type="xsd:Array"/>
+      <part name="language" type="xsd:string"/>
+      <part name="sourceCode" type="xsd:string"/>
+    </message>
+
+    <message name="addCompileSubmissionSpecialResponse">
+      <part name="id" type="xsd:int"/>
+    </message>
+
     <!--####################### addCompileSubmission ########################-->
 
     <message name="addCompileSubmissionRequest">
@@ -229,6 +243,11 @@
       <operation name="addSubmission">
         <input message="addSubmissionRequest"/>
         <output message="addSubmissionResponse"/>
+      </operation>
+
+	  <operation name="addCompileSubmissionSpecial">
+        <input message="addCompileSubmissionSpecialRequest"/>
+        <output message="addCompileSubmissionSpecialResponse"/>
       </operation>
 
       <operation name="addCompileSubmission">
@@ -319,6 +338,12 @@
       </operation>
 
       <operation name='addSubmission'>
+        <soap:operation soapAction="http://domserver.fe.up.pt/domjudge/frontend"/>
+        <input> <soap:body use="literal"/> </input>
+        <output> <soap:body use="literal"/> </output>
+      </operation>
+
+	  <operation name='addCompileSubmissionSpecial'>
         <soap:operation soapAction="http://domserver.fe.up.pt/domjudge/frontend"/>
         <input> <soap:body use="literal"/> </input>
         <output> <soap:body use="literal"/> </output>

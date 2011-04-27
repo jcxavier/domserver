@@ -391,6 +391,55 @@ class ProgrammingAssessmentService {
         return $ids;
     }
 
+    function addCompileSubmissionSpecial($participantLogin, $assessmentId, $testCasesIds, $language, $sourcecode) {
+        
+        $ids = array();
+        $conn = $this->connect_to_db();
+
+        if (! $conn) {
+            return -1;
+        }
+
+        $query = "SELECT cid FROM contest WHERE contestname = \"progassessment\"";
+        $result = mysql_query($query);
+        $row = mysql_fetch_array($result);
+
+        if (! $row) {
+            return -1;
+        }
+
+        $test_cases_ids = array();
+
+        if (is_array($testCasesIds->int)) {
+            $test_cases_ids = $testCasesIds->int;
+        } else {
+            $test_cases_ids[] = $testCasesIds->int;
+        }
+
+        $cid = (int) $row{'cid'};
+        $time = date("Y-m-d H:i:s");
+        $sourcecode = addslashes($sourcecode);
+        $columns = "(cid, teamid, probid, langid, submittime, sourcecode)";
+
+        //insert a submission for each test case
+        foreach($test_cases_ids as $i) {
+            $newAssessmentId = "$assessmentId" . "_$i";
+            $values = "($cid, \"$participantLogin\", \"$newAssessmentId\", \"$language\", \"$time\", \"$sourcecode\")";
+            $query = "INSERT INTO submission $columns values $values";
+
+            mysql_query($query);
+
+            //get the id of the submission
+            $result = mysql_query("SELECT LAST_INSERT_ID();");
+            $row = mysql_fetch_array($result);
+            
+            // return the first one, since it is just checking for compilation
+            return (int) $row{'LAST_INSERT_ID()'};
+        }
+        
+        return -1;
+    }
+
     function addCompileSubmission($participantLogin, $assessmentId, $language, $sourcecode) {
         
         $conn = $this->connect_to_db();
