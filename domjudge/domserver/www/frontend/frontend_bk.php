@@ -1,9 +1,7 @@
 <?php
 
-define('CONTEST', '"Concurso SQL"');
-
 class ProgrammingAssessmentService {
-    
+
     private function connect_to_db() {
         $dbhost = "localhost:3306";
         $dbname = "domjudge";
@@ -26,7 +24,7 @@ class ProgrammingAssessmentService {
         }
 
         //insert entry in the contest table
-        $query = "SELECT cid FROM contest WHERE contestname = " . CONTEST;
+        $query = "SELECT cid FROM contest WHERE contestname = \"progassessment\"";
         $result = mysql_query($query);
         $row = mysql_fetch_array($result);
 
@@ -34,7 +32,7 @@ class ProgrammingAssessmentService {
             $startTime = "2000-01-01 00:00:00";
             $endTime = "2100-01-01 00:00:00";
             $columns = "(contestname, activatetime, starttime, endtime)";
-            $values = "(" . CONTEST . ", \"$startTime\", \"$startTime\", \"$endTime\")";
+            $values = "(\"progassessment\", \"$startTime\", \"$startTime\", \"$endTime\")";
             $insert_query = "INSERT INTO contest " . $columns . " values " . $values;
             mysql_query($insert_query);
 
@@ -100,7 +98,7 @@ class ProgrammingAssessmentService {
             return false;
         }
 
-        $query = "SELECT cid FROM contest WHERE contestname = " . CONTEST;
+        $query = "SELECT cid FROM contest WHERE contestname = \"progassessment\"";
         $result = mysql_query($query);
         $row = mysql_fetch_array($result);
 
@@ -355,7 +353,7 @@ class ProgrammingAssessmentService {
             return $ids;
         }
 
-        $query = "SELECT cid FROM contest WHERE contestname = " . CONTEST;
+        $query = "SELECT cid FROM contest WHERE contestname = \"progassessment\"";
         $result = mysql_query($query);
         $row = mysql_fetch_array($result);
 
@@ -402,7 +400,7 @@ class ProgrammingAssessmentService {
             return -1;
         }
 
-        $query = "SELECT cid FROM contest WHERE contestname = " . CONTEST;
+        $query = "SELECT cid FROM contest WHERE contestname = \"progassessment\"";
         $result = mysql_query($query);
         $row = mysql_fetch_array($result);
 
@@ -450,7 +448,7 @@ class ProgrammingAssessmentService {
             return -1;
         }
 
-        $query = "SELECT cid FROM contest WHERE contestname = " . CONTEST;
+        $query = "SELECT cid FROM contest WHERE contestname = \"progassessment\"";
         $result = mysql_query($query);
         $row = mysql_fetch_array($result);
 
