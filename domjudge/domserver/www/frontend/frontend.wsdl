@@ -28,6 +28,12 @@
       <part name="result" type="ArrayOfstring"/>
     </message>
 
+	<!--####################### getMetrics ###############################-->
+
+    <message name="getMetricsResponse">
+      <part name="result" type="ArrayOfstring"/>
+    </message>
+
     <!--####################### getAllLanguagesInfo ###############################-->
 
     <message name="getAllLanguagesInfoResponse">
@@ -192,6 +198,10 @@
         <output message="getLanguagesResponse"/>
       </operation>
 
+	  <operation name="getMetrics">
+        <output message="getMetricsResponse"/>
+      </operation>
+
       <operation name="getAllLanguagesInfo">
         <output message="getAllLanguagesInfoResponse"/>
       </operation>
@@ -274,6 +284,11 @@
       </operation>
 
       <operation name='getLanguages'>
+        <soap:operation soapAction="http://domserver.fe.up.pt/domjudge/frontend"/>
+        <output> <soap:body use="literal"/> </output>
+      </operation>
+
+	  <operation name='getMetrics'>
         <soap:operation soapAction="http://domserver.fe.up.pt/domjudge/frontend"/>
         <output> <soap:body use="literal"/> </output>
       </operation>

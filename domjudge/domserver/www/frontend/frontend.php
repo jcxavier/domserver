@@ -57,7 +57,7 @@ class ProgrammingAssessmentService {
             return $languages;
         }
 
-        $query = "SELECT * FROM  language";
+        $query = "SELECT * FROM language";
         $result = mysql_query($query);
 
         while ($row = mysql_fetch_array($result)) {
@@ -68,6 +68,60 @@ class ProgrammingAssessmentService {
 
         mysql_close($conn);
         return $languages;
+    }
+    
+    function getMetrics() {
+        
+        // Halstead Software Science
+        $halstead['difficultyLevel'] =          'Difficulty level';
+        $halstead['effortToImplement'] =        'Effort to implement';
+        $halstead['numberDeliveredBugs'] =      'Number of delivered bugs';
+        $halstead['numberUniqueOperands'] =     'Number of unique operands';
+        $halstead['numberUniqueOperators'] =    'Number of unique operators';
+        $halstead['programLength'] =            'Program length';
+        $halstead['programLevel'] =             'Program level';
+        $halstead['timeToImplement'] =          'Time to implement';
+        $halstead['totalNumberOperands'] =      'Total number of operands';
+        $halstead['totalNumberOperators'] =     'Total number of operators';
+        $halstead['vocabularySize'] =           'Vocabulary size';
+
+        // Style metrics as defined by Submit!
+        $style['blockBracketsSingle'] =         'Block of brackets in a single line violation';
+        $style['checkTabs'] =                   'Tab character violation';
+        $style['programLineSize'] =             'Program line size violation';
+        $style['spaceBracketsCode'] =           'Space between brackets and code';
+        $style['spaceCommentsText'] =           'Space between a comment tag and text';
+        $style['spaceParentesisBrackets'] =     'Space between parentesis and brackets';
+
+        // Other metrics
+        $misc['cyclomaticComplexity'] =         'Cyclomatic complexity';
+        $misc['linesOfCode'] =                  'Lines of code';
+
+
+        // Mapping of metrics to programming languages
+        // C
+        $metrics['C']['halstead'] =     $halstead;
+        $metrics['C']['style'] =        $style;
+        $metrics['C']['misc'] =         $misc;
+        
+        /*
+        $metrics['C++']['halstead'] =     $halstead;
+        $metrics['C++']['style'] =        $style;
+        $metrics['C++']['misc'] =         $misc;
+        
+        $metrics['C#']['halstead'] =     $halstead;
+        $metrics['C#']['style'] =        $style;
+        $metrics['C#']['misc'] =         $misc; */
+        
+        $metrics['C++'] = null;
+        $metrics['C#'] = null;
+        $metrics['Java'] = null;
+        $metrics['Python'] = null;
+        $metrics['Scheme'] = null;
+        $metrics['SQL'] = null;
+        
+        
+        return $metrics;
     }
 
     function getAllLanguagesInfo() {
